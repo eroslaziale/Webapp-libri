@@ -475,22 +475,43 @@ async function doLogout(){
 }
 
 // ── Auth state listener ────────────────────────────────────────────────────────
-sb.auth.onAuthStateChange(async(event,session)=>{
-  const overlay=document.getElementById('loading-overlay');
-  if(session?.user){
-    currentUser=session.user;
-    document.getElementById('auth-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    document.getElementById('user-email-display').textContent=currentUser.email;
-    await loadBooks();
-    overlay.style.display='none';
-  } else {
-    currentUser=null;
-    books=[];
-    document.getElementById('app').style.display='none';
+function hideOverlay(){document.getElementById('loading-overlay').style.display='none';}
+
+// Timeout di sicurezza: se dopo 5 secondi il loading è ancora visibile, mostra il login
+setTimeout(()=>{
+  if(document.getElementById('loading-overlay').style.display!=='none'){
+    hideOverlay();
     document.getElementById('auth-screen').style.display='flex';
-    overlay.style.display='none';
   }
+},5000);
+
+async function showApp(user){
+  currentUser=user;
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('user-email-display').textContent=currentUser.email;
+  await loadBooks();
+  hideOverlay();
+}
+
+function showAuth(){
+  currentUser=null;
+  books=[];
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  hideOverlay();
+}
+
+// Controlla subito la sessione esistente senza aspettare l'evento
+sb.auth.getSession().then(({data:{session}})=>{
+  if(session?.user) showApp(session.user);
+  else showAuth();
+});
+
+// Ascolta i cambiamenti successivi (login, logout, refresh token)
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='SIGNED_IN'&&session?.user) showApp(session.user);
+  else if(event==='SIGNED_OUT') showAuth();
 });
 
 // ── DB operations ──────────────────────────────────────────────────────────────
