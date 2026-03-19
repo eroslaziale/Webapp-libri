@@ -283,6 +283,36 @@
   .btn-cancel-notes{flex:1;padding:10px;background:transparent;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;}
   .btn-cancel-notes:hover{border-color:var(--ink-muted);color:var(--ink);}
 
+  /* ── Quotes section ── */
+  .quotes-section{border-top:1px solid var(--border);padding-top:18px;margin-bottom:20px;}
+  .quotes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .quotes-label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-light);}
+  .btn-add-quote{font-size:11px;font-weight:500;color:var(--amber);background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;display:flex;align-items:center;gap:4px;}
+  .btn-add-quote:hover{color:#A06E10;}
+  .quotes-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+  .quote-item{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--ink-light);border-radius:0 8px 8px 0;padding:12px 14px;position:relative;}
+  .quote-item:hover .quote-delete{opacity:1;}
+  .quote-text{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:var(--ink);line-height:1.6;margin-bottom:4px;}
+  .quote-text::before{content:'"';opacity:.4;}
+  .quote-text::after{content:'"';opacity:.4;}
+  .quote-page{font-size:11px;color:var(--ink-light);font-family:'DM Mono',monospace;}
+  .quote-delete{position:absolute;top:8px;right:8px;width:22px;height:22px;background:transparent;border:none;color:var(--ink-light);font-size:12px;cursor:pointer;opacity:0;transition:opacity .15s,color .15s;border-radius:4px;display:flex;align-items:center;justify-content:center;}
+  .quote-delete:hover{color:var(--rust);}
+  .quotes-empty{font-size:13px;color:var(--ink-light);font-style:italic;text-align:center;padding:8px 0 4px;}
+  .quote-add-form{display:none;background:var(--cream-dark);border-radius:10px;padding:14px;margin-top:4px;}
+  .quote-add-form.open{display:block;}
+  .quote-add-form textarea{width:100%;height:80px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:var(--ink);background:var(--cream);outline:none;resize:none;transition:border-color .2s;margin-bottom:8px;}
+  .quote-add-form textarea:focus{border-color:var(--amber);}
+  .quote-form-row{display:flex;gap:8px;align-items:center;}
+  .quote-page-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);background:var(--cream);outline:none;transition:border-color .2s;}
+  .quote-page-input:focus{border-color:var(--amber);}
+  .btn-save-quote{padding:9px 18px;background:var(--ink);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--cream);cursor:pointer;transition:background .2s;white-space:nowrap;}
+  .btn-save-quote:hover{background:#2D2420;}
+  .btn-save-quote:disabled{opacity:.5;cursor:default;}
+  .btn-cancel-quote{padding:9px 14px;background:transparent;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink-muted);cursor:pointer;}
+  .btn-cancel-quote:hover{border-color:var(--ink-muted);color:var(--ink);}
+  .quotes-loading{font-size:13px;color:var(--ink-light);text-align:center;padding:8px 0;}
+
   /* ── Load more ── */
   .btn-load-more{display:block;margin:16px auto 0;padding:10px 24px;background:transparent;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;transition:all .2s;}
   .btn-load-more:hover{border-color:var(--ink);color:var(--ink);}
@@ -584,6 +614,24 @@
         </div>
       </div>
     </div>
+    <!-- Quotes section (only for read books) -->
+    <div class="quotes-section" id="d-quotes-section" style="display:none">
+      <div class="quotes-header">
+        <span class="quotes-label">Citazioni</span>
+        <button class="btn-add-quote" id="d-add-quote-btn" onclick="toggleQuoteForm()">＋ Aggiungi citazione</button>
+      </div>
+      <div class="quote-add-form" id="d-quote-form">
+        <textarea id="d-quote-text" placeholder="Scrivi la citazione…"></textarea>
+        <div class="quote-form-row">
+          <input class="quote-page-input" id="d-quote-page" type="text" placeholder="Pagina (opzionale)">
+          <button class="btn-cancel-quote" onclick="toggleQuoteForm()">Annulla</button>
+          <button class="btn-save-quote" id="d-save-quote-btn" onclick="saveQuote()">Salva</button>
+        </div>
+      </div>
+      <div id="d-quotes-loading" class="quotes-loading" style="display:none">Caricamento…</div>
+      <div class="quotes-list" id="d-quotes-list"></div>
+    </div>
+
     <div class="detail-actions">
       <button class="btn-close-d" id="d-close">Chiudi</button>
       <button class="btn-mark-read" id="d-mark" style="display:none">✓ Segna come letto</button>
@@ -615,6 +663,7 @@ let detailId = null;
 let wishToRemoveId = null;
 let viewMode = { read: 'grid', wish: 'grid' };
 let searchQuery = '';
+let currentQuotes = [];
 let searchOffset = 0;
 let searchHasMore = false;
 
@@ -1048,6 +1097,20 @@ function openDetail(id){
     cancelNotesEdit();
   }
   document.getElementById('d-mark').style.display=b.shelf==='wish'?'block':'none';
+
+  // Quotes section
+  const quotesSection=document.getElementById('d-quotes-section');
+  if(b.shelf==='read'){
+    quotesSection.style.display='block';
+    loadQuotes(b.id);
+    // Reset form
+    document.getElementById('d-quote-form').classList.remove('open');
+    document.getElementById('d-quote-text').value='';
+    document.getElementById('d-quote-page').value='';
+  } else {
+    quotesSection.style.display='none';
+  }
+
   document.getElementById('detail-overlay').classList.add('visible');
 }
 
@@ -1066,6 +1129,80 @@ document.getElementById('d-del').addEventListener('click',async()=>{
   const ok=await deleteBookDB(detailId);
   if(ok){books=books.filter(b=>b.id!==detailId);document.getElementById('detail-overlay').classList.remove('visible');render();showToast('Libro rimosso.');}
 });
+
+// ── Quotes ────────────────────────────────────────────────────────────────────
+async function loadQuotes(bookId){
+  currentQuotes=[];
+  const list=document.getElementById('d-quotes-list');
+  const loading=document.getElementById('d-quotes-loading');
+  list.innerHTML='';
+  loading.style.display='block';
+  const {data,error}=await sb.from('quotes').select('*').eq('book_id',bookId).order('created_at',{ascending:true});
+  loading.style.display='none';
+  if(error){list.innerHTML='<p class="quotes-empty">Errore nel caricamento.</p>';return;}
+  currentQuotes=data||[];
+  renderQuotes();
+}
+
+function renderQuotes(){
+  const list=document.getElementById('d-quotes-list');
+  if(!currentQuotes.length){
+    list.innerHTML='<p class="quotes-empty">Nessuna citazione ancora. Aggiungine una!</p>';
+    return;
+  }
+  list.innerHTML=currentQuotes.map(q=>`
+    <div class="quote-item" data-qid="${q.id}">
+      <p class="quote-text">${esc(q.text)}</p>
+      ${q.page?`<p class="quote-page">p. ${esc(q.page)}</p>`:''}
+      <button class="quote-delete" onclick="deleteQuote('${q.id}')" title="Elimina">✕</button>
+    </div>`).join('');
+}
+
+function toggleQuoteForm(){
+  const form=document.getElementById('d-quote-form');
+  const isOpen=form.classList.contains('open');
+  form.classList.toggle('open',!isOpen);
+  document.getElementById('d-add-quote-btn').textContent=isOpen?'＋ Aggiungi citazione':'✕ Annulla';
+  if(!isOpen) document.getElementById('d-quote-text').focus();
+  else{
+    document.getElementById('d-quote-text').value='';
+    document.getElementById('d-quote-page').value='';
+  }
+}
+
+async function saveQuote(){
+  const text=document.getElementById('d-quote-text').value.trim();
+  const page=document.getElementById('d-quote-page').value.trim();
+  if(!text){showToast('Scrivi il testo della citazione.');return;}
+  const btn=document.getElementById('d-save-quote-btn');
+  btn.disabled=true;btn.textContent='Salvataggio…';
+  const {data,error}=await sb.from('quotes').insert({
+    user_id:currentUser.id,
+    book_id:detailId,
+    text,
+    page,
+    created_at:Date.now()
+  }).select().single();
+  btn.disabled=false;btn.textContent='Salva';
+  if(error){showToast('Errore nel salvataggio.');return;}
+  currentQuotes.push(data);
+  renderQuotes();
+  // Reset form
+  document.getElementById('d-quote-text').value='';
+  document.getElementById('d-quote-page').value='';
+  document.getElementById('d-quote-form').classList.remove('open');
+  document.getElementById('d-add-quote-btn').textContent='＋ Aggiungi citazione';
+  showToast('💬 Citazione salvata!');
+}
+
+async function deleteQuote(qid){
+  if(!confirm('Eliminare questa citazione?'))return;
+  const {error}=await sb.from('quotes').delete().eq('id',qid);
+  if(error){showToast('Errore nell'eliminazione.');return;}
+  currentQuotes=currentQuotes.filter(q=>q.id!==qid);
+  renderQuotes();
+  showToast('Citazione eliminata.');
+}
 
 // ── Notes editing ─────────────────────────────────────────────────────────────
 function toggleNotesEdit(){
