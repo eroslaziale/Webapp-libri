@@ -209,6 +209,29 @@
   .btn-del{flex:1;min-width:80px;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--rust);cursor:pointer;transition:all .15s;}
   .btn-del:hover{background:var(--rust);color:#fff;border-color:var(--rust);}
 
+  /* ── Detail notes editor ── */
+  .detail-notes-section{border-top:1px solid var(--border);padding-top:16px;margin-bottom:20px;}
+  .detail-notes-label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-light);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+  .btn-edit-notes{font-size:11px;font-weight:500;color:var(--amber);background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;}
+  .btn-edit-notes:hover{color:#A06E10;}
+  .notes-display{background:var(--amber-pale);border-left:3px solid var(--amber);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:var(--ink-muted);font-style:italic;line-height:1.6;}
+  .notes-display.empty{font-style:normal;color:var(--ink-light);}
+  .notes-edit-area{display:none;}
+  .notes-edit-area.open{display:block;}
+  .detail-notes-textarea{width:100%;height:90px;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--cream);outline:none;resize:none;transition:border-color .2s;margin-bottom:10px;}
+  .detail-notes-textarea:focus{border-color:var(--amber);}
+  .notes-edit-actions{display:flex;gap:8px;}
+  .btn-save-notes{flex:2;padding:10px;background:var(--ink);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--cream);cursor:pointer;transition:background .2s;}
+  .btn-save-notes:hover{background:#2D2420;}
+  .btn-save-notes:disabled{opacity:.5;cursor:default;}
+  .btn-cancel-notes{flex:1;padding:10px;background:transparent;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;}
+  .btn-cancel-notes:hover{border-color:var(--ink-muted);color:var(--ink);}
+
+  /* ── Load more ── */
+  .btn-load-more{display:block;margin:16px auto 0;padding:10px 24px;background:transparent;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;transition:all .2s;}
+  .btn-load-more:hover{border-color:var(--ink);color:var(--ink);}
+  .btn-load-more:disabled{opacity:.5;cursor:default;}
+
   /* ── Toast ── */
   .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--cream);padding:12px 24px;border-radius:100px;font-size:14px;font-weight:500;z-index:300;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
@@ -301,6 +324,7 @@
       <div id="search-results">
         <p class="results-title" id="results-label">Risultati</p>
         <div class="results-grid" id="results-grid"></div>
+        <button class="btn-load-more" id="btn-load-more" style="display:none" onclick="loadMoreResults()">Carica altri risultati</button>
       </div>
     </div>
 
@@ -395,7 +419,20 @@
       </div>
     </div>
     <p class="detail-desc" id="d-desc"></p>
-    <div class="detail-notes" id="d-notes" style="display:none"></div>
+    <div class="detail-notes-section" id="d-notes-section">
+      <div class="detail-notes-label">
+        Note di lettura
+        <button class="btn-edit-notes" id="d-edit-notes-btn" onclick="toggleNotesEdit()">✏️ Modifica</button>
+      </div>
+      <div class="notes-display" id="d-notes-display"></div>
+      <div class="notes-edit-area" id="d-notes-edit">
+        <textarea class="detail-notes-textarea" id="d-notes-textarea" placeholder="Aggiungi le tue note di lettura…"></textarea>
+        <div class="notes-edit-actions">
+          <button class="btn-cancel-notes" onclick="cancelNotesEdit()">Annulla</button>
+          <button class="btn-save-notes" id="d-save-notes-btn" onclick="saveNotes()">Salva</button>
+        </div>
+      </div>
+    </div>
     <div class="detail-actions">
       <button class="btn-close-d" id="d-close">Chiudi</button>
       <button class="btn-mark-read" id="d-mark" style="display:none">✓ Segna come letto</button>
@@ -425,6 +462,9 @@ let sortWish = 'date-desc';
 let curTab = 'read';
 let detailId = null;
 let wishToRemoveId = null;
+let searchQuery = '';
+let searchOffset = 0;
+let searchHasMore = false;
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -530,6 +570,12 @@ function dbToBook(row){
   };
 }
 
+async function updateNotesDB(id, notes){
+  const {error}=await sb.from('books').update({notes}).eq('id',id);
+  if(error){showToast('Errore nel salvataggio delle note.');return false;}
+  return true;
+}
+
 async function insertBook(b){
   const {data,error}=await sb.from('books').insert({
     user_id:currentUser.id, google_id:b.googleId, title:b.title,
@@ -605,52 +651,91 @@ function bookCard(b){
 document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
 document.getElementById('search-btn').addEventListener('click',doSearch);
 
+function renderResultCards(items, append=false){
+  const grid=document.getElementById('results-grid');
+  const html=items.map(item=>{
+    const info=item.volumeInfo||{};
+    const title=info.title||'Titolo sconosciuto';
+    const author=(info.authors||[]).join(', ')||'Autore sconosciuto';
+    const year=info.publishedDate?info.publishedDate.substring(0,4):'';
+    const rawCover=info.imageLinks?(info.imageLinks.thumbnail||info.imageLinks.smallThumbnail):null;
+    const cover=rawCover?rawCover.replace('http://','https://'):'';
+    const desc=(info.description||'').replace(/\n/g,' ');
+    const id=item.id;
+    const exRead=books.some(b=>b.googleId===id&&b.shelf==='read');
+    const exWish=books.some(b=>b.googleId===id&&b.shelf==='wish');
+    const coverHtml=cover?`<img class="result-cover" src="${esc(cover)}" alt="${esc(title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''
+    const ph=`<div class="result-cover-placeholder" style="${cover?'display:none':''}">📖</div>`;
+    return `<div class="result-card" data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}" data-year="${year}" data-cover="${esc(cover)}" data-desc="${esc(desc)}">
+      ${coverHtml}${ph}
+      <div class="result-info">
+        <p class="result-title">${esc(title)}</p>
+        <p class="result-author">${esc(author)}</p>
+        <p class="result-year">${year}</p>
+        <div class="result-btns">
+          <button class="btn-add-read" ${exRead?'disabled':''}>${exRead?'✓ Letto':'📖 Già letto'}</button>
+          <button class="btn-add-wishlist" ${exWish?'disabled':''}>${exWish?'✓ In lista':'🔖 Da leggere'}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  if(append) grid.insertAdjacentHTML('beforeend', html);
+  else grid.innerHTML = html;
+  // Bind buttons on new cards
+  grid.querySelectorAll('.result-card').forEach(card=>{
+    // avoid double-binding by checking a flag
+    if(card.dataset.bound) return;
+    card.dataset.bound='1';
+    const getData=()=>({googleId:card.dataset.id,title:card.dataset.title,author:card.dataset.author,year:card.dataset.year,cover:card.dataset.cover,description:card.dataset.desc});
+    card.querySelector('.btn-add-read').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='read'))startAdd(getData(),'read');});
+    card.querySelector('.btn-add-wishlist').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='wish'))startAdd(getData(),'wish');});
+  });
+}
+
+async function fetchResults(query, offset=0){
+  const url=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=8&startIndex=${offset}`;
+  const data=await fetch(url).then(r=>r.json());
+  return data;
+}
+
+async function loadMoreResults(){
+  const btn=document.getElementById('btn-load-more');
+  btn.disabled=true;btn.textContent='Caricamento…';
+  try{
+    searchOffset+=8;
+    const data=await fetchResults(searchQuery, searchOffset);
+    const items=data.items||[];
+    searchHasMore=items.length===8;
+    renderResultCards(items, true);
+    document.getElementById('results-label').textContent=
+      `Risultati per "${searchQuery}" — mostrando ${searchOffset+items.length}`;
+    btn.style.display=searchHasMore?'block':'none';
+  }catch(e){showToast('Errore nel caricamento.');}
+  btn.disabled=false;btn.textContent='Carica altri risultati';
+}
+
 async function doSearch(){
   const q=document.getElementById('search-input').value.trim();if(!q)return;
+  searchQuery=q;searchOffset=0;searchHasMore=false;
   const btn=document.getElementById('search-btn'),btnTxt=document.getElementById('search-btn-text'),
     icon=document.getElementById('search-icon'),loading=document.getElementById('search-loading'),
-    results=document.getElementById('search-results'),grid=document.getElementById('results-grid');
+    results=document.getElementById('search-results'),grid=document.getElementById('results-grid'),
+    moreBtn=document.getElementById('btn-load-more');
   btn.disabled=true;btnTxt.textContent='Ricerca…';
   icon.innerHTML='<div class="spinner"></div>';
-  loading.classList.add('visible');results.classList.remove('visible');grid.innerHTML='';
+  loading.classList.add('visible');results.classList.remove('visible');
+  grid.innerHTML='';moreBtn.style.display='none';
   try{
-    const data=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8`).then(r=>r.json());
+    const data=await fetchResults(q,0);
     loading.classList.remove('visible');
     const items=data.items||[];
     if(!items.length){grid.innerHTML='<p style="color:var(--ink-muted);font-size:14px;">Nessun risultato trovato.</p>';}
     else{
+      searchHasMore=items.length===8;
       document.getElementById('results-label').textContent=`${items.length} risultati per "${q}"`;
-      grid.innerHTML=items.map(item=>{
-        const info=item.volumeInfo||{};
-        const title=info.title||'Titolo sconosciuto';
-        const author=(info.authors||[]).join(', ')||'Autore sconosciuto';
-        const year=info.publishedDate?info.publishedDate.substring(0,4):'';
-        const rawCover=info.imageLinks?(info.imageLinks.thumbnail||info.imageLinks.smallThumbnail):null;
-        const cover=rawCover?rawCover.replace('http://','https://'):'';
-        const desc=(info.description||'').replace(/\n/g,' ');
-        const id=item.id;
-        const exRead=books.some(b=>b.googleId===id&&b.shelf==='read');
-        const exWish=books.some(b=>b.googleId===id&&b.shelf==='wish');
-        const coverHtml=cover?`<img class="result-cover" src="${esc(cover)}" alt="${esc(title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''
-        const ph=`<div class="result-cover-placeholder" style="${cover?'display:none':''}">📖</div>`;
-        return `<div class="result-card" data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}" data-year="${year}" data-cover="${esc(cover)}" data-desc="${esc(desc)}">
-          ${coverHtml}${ph}
-          <div class="result-info">
-            <p class="result-title">${esc(title)}</p>
-            <p class="result-author">${esc(author)}</p>
-            <p class="result-year">${year}</p>
-            <div class="result-btns">
-              <button class="btn-add-read" ${exRead?'disabled':''}>${exRead?'✓ Letto':'📖 Già letto'}</button>
-              <button class="btn-add-wishlist" ${exWish?'disabled':''}>${exWish?'✓ In lista':'🔖 Da leggere'}</button>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-      document.querySelectorAll('#results-grid .result-card').forEach(card=>{
-        const getData=()=>({googleId:card.dataset.id,title:card.dataset.title,author:card.dataset.author,year:card.dataset.year,cover:card.dataset.cover,description:card.dataset.desc});
-        card.querySelector('.btn-add-read').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='read'))startAdd(getData(),'read');});
-        card.querySelector('.btn-add-wishlist').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='wish'))startAdd(getData(),'wish');});
-      });
+      renderResultCards(items, false);
+      moreBtn.style.display=searchHasMore?'block':'none';
+      moreBtn.disabled=false;moreBtn.textContent='Carica altri risultati';
     }
     results.classList.add('visible');
   }catch(e){
@@ -760,9 +845,17 @@ function openDetail(id){
   const desc=document.getElementById('d-desc');
   if(b.description){desc.textContent=b.description.length>400?b.description.substring(0,400)+'…':b.description;desc.style.display='block';}
   else desc.style.display='none';
-  const notes=document.getElementById('d-notes');
-  if(b.notes){notes.textContent='"'+b.notes+'"';notes.style.display='block';}
-  else notes.style.display='none';
+  // Notes section
+  const notesDisplay=document.getElementById('d-notes-display');
+  const notesSection=document.getElementById('d-notes-section');
+  // Hide notes section for wishlist books (no notes)
+  notesSection.style.display=b.shelf==='wish'?'none':'block';
+  if(b.shelf==='read'){
+    notesDisplay.textContent=b.notes||'Nessuna nota aggiunta.';
+    notesDisplay.className='notes-display'+(b.notes?'':' empty');
+    document.getElementById('d-notes-textarea').value=b.notes||'';
+    cancelNotesEdit();
+  }
   document.getElementById('d-mark').style.display=b.shelf==='wish'?'block':'none';
   document.getElementById('detail-overlay').classList.add('visible');
 }
@@ -782,6 +875,42 @@ document.getElementById('d-del').addEventListener('click',async()=>{
   const ok=await deleteBookDB(detailId);
   if(ok){books=books.filter(b=>b.id!==detailId);document.getElementById('detail-overlay').classList.remove('visible');render();showToast('Libro rimosso.');}
 });
+
+// ── Notes editing ─────────────────────────────────────────────────────────────
+function toggleNotesEdit(){
+  const editArea=document.getElementById('d-notes-edit');
+  const isOpen=editArea.classList.contains('open');
+  if(isOpen){cancelNotesEdit();}
+  else{
+    editArea.classList.add('open');
+    document.getElementById('d-notes-display').style.display='none';
+    document.getElementById('d-edit-notes-btn').textContent='✕ Annulla';
+    document.getElementById('d-notes-textarea').focus();
+  }
+}
+
+function cancelNotesEdit(){
+  document.getElementById('d-notes-edit').classList.remove('open');
+  document.getElementById('d-notes-display').style.display='block';
+  document.getElementById('d-edit-notes-btn').textContent='✏️ Modifica';
+}
+
+async function saveNotes(){
+  const btn=document.getElementById('d-save-notes-btn');
+  const newNotes=document.getElementById('d-notes-textarea').value.trim();
+  btn.disabled=true;btn.textContent='Salvataggio…';
+  const ok=await updateNotesDB(detailId,newNotes);
+  if(ok){
+    const b=books.find(b=>b.id===detailId);
+    if(b)b.notes=newNotes;
+    const notesDisplay=document.getElementById('d-notes-display');
+    notesDisplay.textContent=newNotes||'Nessuna nota aggiunta.';
+    notesDisplay.className='notes-display'+(newNotes?'':' empty');
+    cancelNotesEdit();
+    showToast('📝 Note salvate!');
+  }
+  btn.disabled=false;btn.textContent='Salva';
+}
 
 // ── Tabs ───────────────────────────────────────────────────────────────────────
 document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.tab)));
