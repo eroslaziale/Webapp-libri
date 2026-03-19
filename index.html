@@ -92,6 +92,8 @@
   .result-year{font-size:11px;color:var(--ink-light);font-family:'DM Mono',monospace;margin-bottom:8px;}
   .result-btns{display:flex;gap:6px;flex-wrap:wrap;}
   .btn-add-read,.btn-add-wishlist{padding:5px 11px;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:background .2s;}
+  .btn-preview-card{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--ink-muted);transition:all .15s;}
+  .btn-preview-card:hover{border-color:var(--ink);color:var(--ink);}
   .btn-add-read{background:var(--amber);color:#fff;}
   .btn-add-read:hover:not(:disabled){background:#A06E10;}
   .btn-add-wishlist{background:var(--forest);color:#fff;}
@@ -208,6 +210,35 @@
   .btn-confirm:hover:not(:disabled){background:#2D2420;}
   .btn-confirm:disabled{opacity:.4;cursor:default;}
 
+  /* ── Search preview panel ── */
+  .preview-overlay{display:none;position:fixed;inset:0;background:rgba(26,20,16,.5);z-index:200;align-items:flex-end;justify-content:center;padding:24px;}
+  .preview-overlay.visible{display:flex;}
+  .preview-panel{background:var(--card-bg);border-radius:20px;padding:0;max-width:560px;width:100%;box-shadow:0 24px 80px rgba(26,20,16,.3);animation:panelIn .3s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto;}
+  .preview-hero{position:relative;border-radius:20px 20px 0 0;overflow:hidden;background:var(--cream-dark);}
+  .preview-hero-blur{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(24px) brightness(.6);transform:scale(1.1);}
+  .preview-hero-content{position:relative;display:flex;gap:20px;padding:28px 28px 24px;align-items:flex-end;}
+  .preview-cover{width:90px;height:126px;object-fit:cover;border-radius:8px;flex-shrink:0;box-shadow:4px 8px 24px rgba(26,20,16,.4);}
+  .preview-cover-ph{width:90px;height:126px;border-radius:8px;flex-shrink:0;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:36px;}
+  .preview-hero-info{flex:1;min-width:0;}
+  .preview-hero-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:6px;text-shadow:0 1px 4px rgba(0,0,0,.3);}
+  .preview-hero-author{font-size:14px;color:rgba(255,255,255,.8);margin-bottom:4px;}
+  .preview-hero-meta{font-size:12px;color:rgba(255,255,255,.6);font-family:'DM Mono',monospace;}
+  .preview-body{padding:24px 28px 28px;}
+  .preview-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+  .preview-tag{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:var(--cream-dark);color:var(--ink-muted);}
+  .preview-desc-label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-light);margin-bottom:8px;}
+  .preview-desc{font-size:14px;line-height:1.75;color:var(--ink-muted);margin-bottom:24px;}
+  .preview-desc.collapsed{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+  .preview-read-more{background:none;border:none;color:var(--amber);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;padding:0;margin-bottom:20px;display:block;}
+  .preview-actions{display:flex;gap:10px;}
+  .btn-preview-close{flex:1;padding:13px;background:transparent;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink-muted);cursor:pointer;transition:all .15s;}
+  .btn-preview-close:hover{border-color:var(--ink);color:var(--ink);}
+  .btn-preview-read{flex:2;padding:13px;background:var(--amber);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#fff;cursor:pointer;transition:background .2s;}
+  .btn-preview-read:hover:not(:disabled){background:#A06E10;}
+  .btn-preview-wish{flex:2;padding:13px;background:var(--forest);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#fff;cursor:pointer;transition:background .2s;}
+  .btn-preview-wish:hover:not(:disabled){background:#1E4029;}
+  .btn-preview-read:disabled,.btn-preview-wish:disabled{background:#9B8E7E;cursor:default;}
+
   /* ── Detail panel ── */
   .detail-overlay{display:none;position:fixed;inset:0;background:rgba(26,20,16,.5);z-index:200;align-items:flex-end;justify-content:center;padding:24px;}
   .detail-overlay.visible{display:flex;}
@@ -284,6 +315,7 @@
   .suggest-loading{text-align:center;padding:60px 24px;color:var(--ink-muted);}
   .suggest-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
   .suggest-empty{text-align:center;padding:80px 24px;}
+  .suggest-year{font-size:11px;color:var(--ink-light);font-family:'DM Mono',monospace;margin-bottom:6px;}
   .btn-refresh-suggest{display:flex;align-items:center;gap:6px;padding:8px 16px;background:transparent;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--ink-muted);cursor:pointer;transition:all .2s;}
   .btn-refresh-suggest:hover{border-color:var(--ink);color:var(--ink);}
   .btn-refresh-suggest:disabled{opacity:.5;cursor:default;}
@@ -457,6 +489,35 @@
       <div id="suggest-grid" class="suggest-grid"></div>
     </div>
   </main>
+</div>
+
+<!-- Search preview panel -->
+<div class="preview-overlay" id="preview-overlay">
+  <div class="preview-panel" id="preview-panel">
+    <div class="preview-hero">
+      <div class="preview-hero-blur" id="preview-blur"></div>
+      <div class="preview-hero-content">
+        <img class="preview-cover" id="preview-cover" src="" alt="" style="display:none">
+        <div class="preview-cover-ph" id="preview-cover-ph">📖</div>
+        <div class="preview-hero-info">
+          <p class="preview-hero-title" id="preview-title"></p>
+          <p class="preview-hero-author" id="preview-author"></p>
+          <p class="preview-hero-meta" id="preview-meta"></p>
+        </div>
+      </div>
+    </div>
+    <div class="preview-body">
+      <div class="preview-tags" id="preview-tags"></div>
+      <p class="preview-desc-label">Trama</p>
+      <p class="preview-desc collapsed" id="preview-desc">Nessuna descrizione disponibile.</p>
+      <button class="preview-read-more" id="preview-read-more" onclick="togglePreviewDesc()" style="display:none">Leggi tutto ↓</button>
+      <div class="preview-actions">
+        <button class="btn-preview-close" onclick="closePreview()">Chiudi</button>
+        <button class="btn-preview-read" id="preview-btn-read" onclick="addFromPreview('read')">📖 Già letto</button>
+        <button class="btn-preview-wish" id="preview-btn-wish" onclick="addFromPreview('wish')">🔖 Da leggere</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Add modal -->
@@ -794,7 +855,7 @@ function renderResultCards(items, append=false){
     const exWish=books.some(b=>b.googleId===id&&b.shelf==='wish');
     const coverHtml=cover?`<img class="result-cover" src="${esc(cover)}" alt="${esc(title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''
     const ph=`<div class="result-cover-placeholder" style="${cover?'display:none':''}">📖</div>`;
-    return `<div class="result-card" data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}" data-year="${year}" data-cover="${esc(cover)}" data-desc="${esc(desc)}">
+    return `<div class="result-card" style="cursor:pointer" data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}" data-year="${year}" data-cover="${esc(cover)}" data-desc="${esc(desc)}">
       ${coverHtml}${ph}
       <div class="result-info">
         <p class="result-title">${esc(title)}</p>
@@ -803,6 +864,7 @@ function renderResultCards(items, append=false){
         <div class="result-btns">
           <button class="btn-add-read" ${exRead?'disabled':''}>${exRead?'✓ Letto':'📖 Già letto'}</button>
           <button class="btn-add-wishlist" ${exWish?'disabled':''}>${exWish?'✓ In lista':'🔖 Da leggere'}</button>
+          <button class="btn-preview-card">🔍 Dettagli</button>
         </div>
       </div>
     </div>`;
@@ -817,6 +879,7 @@ function renderResultCards(items, append=false){
     const getData=()=>({googleId:card.dataset.id,title:card.dataset.title,author:card.dataset.author,year:card.dataset.year,cover:card.dataset.cover,description:card.dataset.desc});
     card.querySelector('.btn-add-read').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='read'))startAdd(getData(),'read');});
     card.querySelector('.btn-add-wishlist').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='wish'))startAdd(getData(),'wish');});
+    card.querySelector('.btn-preview-card').addEventListener('click',()=>openPreview(getData()));
   });
 }
 
@@ -1059,7 +1122,38 @@ document.querySelectorAll('.filter-btn').forEach(btn=>btn.addEventListener('clic
 document.getElementById('sort-read').addEventListener('change',e=>{sortRead=e.target.value;render();});
 document.getElementById('sort-wish').addEventListener('change',e=>{sortWish=e.target.value;render();});
 
-// ── Suggestions ───────────────────────────────────────────────────────────────
+// ── Suggestions (Google Books "associated" endpoint) ──────────────────────────
+function suggestCard(item, reason){
+  const info=item.volumeInfo||{};
+  const title=info.title||'Titolo sconosciuto';
+  const author=(info.authors||[]).join(', ')||'Autore sconosciuto';
+  const year=info.publishedDate?info.publishedDate.substring(0,4):'';
+  const rawCover=info.imageLinks?(info.imageLinks.thumbnail||info.imageLinks.smallThumbnail):null;
+  const cover=rawCover?rawCover.replace('http://','https://'):'';
+  const desc=(info.description||'').substring(0,200).replace(/"/g,'&quot;');
+  const id=item.id;
+  const coverHtml=cover?`<img class="suggest-cover" src="${esc(cover)}" alt="${esc(title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''
+  const ph=`<div class="suggest-cover-ph" style="${cover?'display:none':''}">📖</div>`;
+  const exRead=books.some(b=>b.googleId===id&&b.shelf==='read');
+  const exWish=books.some(b=>b.googleId===id&&b.shelf==='wish');
+  return `<div class="suggest-card"
+    onclick="openPreview({googleId:this.dataset.id,title:this.dataset.title,author:this.dataset.author,year:this.dataset.year,cover:this.dataset.cover,description:this.dataset.desc})"
+    data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}"
+    data-year="${year}" data-cover="${esc(cover)}" data-desc="${esc(desc)}" style="cursor:pointer">
+    ${coverHtml}${ph}
+    <div class="suggest-info">
+      <p class="suggest-reason">${esc(reason)}</p>
+      <p class="suggest-title">${esc(title)}</p>
+      <p class="suggest-author">${esc(author)}</p>
+      ${year?`<p class="suggest-year">${year}</p>`:''}
+      <div class="suggest-btns">
+        <button class="btn-suggest-read" ${exRead?'disabled':''} onclick="addFromSuggest(this,'read')">${exRead?'✓ Letto':'📖 Già letto'}</button>
+        <button class="btn-suggest-wish" ${exWish?'disabled':''} onclick="addFromSuggest(this,'wish')">${exWish?'✓ In lista':'🔖 Da leggere'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 async function loadSuggestions(){
   const readBooks=books.filter(b=>b.shelf==='read');
   const grid=document.getElementById('suggest-grid');
@@ -1067,7 +1161,7 @@ async function loadSuggestions(){
   const empty=document.getElementById('suggest-empty');
   const refreshBtn=document.getElementById('btn-refresh-suggest');
 
-  if(readBooks.length<2){
+  if(readBooks.length<1){
     grid.innerHTML='';loading.style.display='none';empty.style.display='block';return;
   }
 
@@ -1075,93 +1169,143 @@ async function loadSuggestions(){
   loading.style.display='block';
   refreshBtn.disabled=true;
 
-  // Build smart queries from top authors and titles
-  const authorCounts={};
-  readBooks.forEach(b=>{
-    if(b.author){
-      b.author.split(',').forEach(a=>{
-        const name=a.trim();
-        if(name)authorCounts[name]=(authorCounts[name]||0)+1;
-      });
-    }
-  });
-  const topAuthors=Object.entries(authorCounts).sort((a,b)=>b[1]-a[1]).slice(0,4).map(e=>e[0]);
-  const randomRead=readBooks.sort(()=>Math.random()-.5).slice(0,3);
-
-  // Build queries: top authors + subject queries from titles
-  const queries=[];
-  topAuthors.slice(0,3).forEach(a=>queries.push({q:`inauthor:"${a}"`,reason:`Stesso autore: ${a}`}));
-  randomRead.forEach(b=>{
-    if(b.author){
-      const firstAuthor=b.author.split(',')[0].trim();
-      queries.push({q:`inauthor:"${firstAuthor}"`,reason:`Ti è piaciuto "${b.title}"`});
-    }
-  });
-
-  // Deduplicate and fetch
   const alreadyIds=new Set(books.map(b=>b.googleId).filter(Boolean));
-  const alreadyTitles=new Set(books.map(b=>b.title.toLowerCase()));
   const seen=new Set();
   const results=[];
 
-  for(const {q,reason} of queries){
-    if(results.length>=12)break;
+  // Pick up to 5 random read books to fetch "associated" for each
+  const picks=[...readBooks].sort(()=>Math.random()-.5).slice(0,5);
+
+  for(const sourceBook of picks){
+    if(!sourceBook.googleId) continue;
     try{
-      // Random startIndex for variety
-      const start=Math.floor(Math.random()*3)*8;
-      const data=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8&startIndex=${start}&langRestrict=it`).then(r=>r.json());
+      // Google Books associated volumes endpoint
+      const url=`https://www.googleapis.com/books/v1/volumes/${sourceBook.googleId}/associated?maxAllowedMaturityRating=not-mature`;
+      const data=await fetch(url).then(r=>r.json());
       const items=data.items||[];
       for(const item of items){
-        if(results.length>=12)break;
-        const info=item.volumeInfo||{};
-        const title=(info.title||'').toLowerCase();
-        if(alreadyIds.has(item.id)||alreadyTitles.has(title)||seen.has(item.id))continue;
+        if(results.length>=16) break;
+        if(alreadyIds.has(item.id)||seen.has(item.id)) continue;
         seen.add(item.id);
-        results.push({item,reason});
+        results.push({item, reason:`Simile a "${sourceBook.title}"`});
       }
     }catch(e){}
+    if(results.length>=16) break;
   }
 
   loading.style.display='none';
   refreshBtn.disabled=false;
 
   if(!results.length){
-    grid.innerHTML='<p style="color:var(--ink-muted);font-size:14px;text-align:center;padding:40px">Nessun suggerimento trovato. Riprova!</p>';
+    grid.innerHTML='<p style="color:var(--ink-muted);font-size:14px;text-align:center;padding:40px">Nessun suggerimento trovato. Google Books potrebbe non avere correlazioni per i tuoi libri, riprova dopo averne aggiunti altri.</p>';
     return;
   }
 
-  grid.innerHTML=results.map(({item,reason})=>{
-    const info=item.volumeInfo||{};
-    const title=info.title||'Titolo sconosciuto';
-    const author=(info.authors||[]).join(', ')||'Autore sconosciuto';
-    const rawCover=info.imageLinks?(info.imageLinks.thumbnail||info.imageLinks.smallThumbnail):null;
-    const cover=rawCover?rawCover.replace('http://','https://'):'';
-    const desc=(info.description||'').replace(/
-/g,' ');
-    const id=item.id;
-    const coverHtml=cover?`<img class="suggest-cover" src="${esc(cover)}" alt="${esc(title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''
-    const ph=`<div class="suggest-cover-ph" style="${cover?'display:none':''}">📖</div>`;
-    return `<div class="suggest-card" data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}" data-cover="${esc(cover)}" data-desc="${esc(desc)}">
-      ${coverHtml}${ph}
-      <div class="suggest-info">
-        <p class="suggest-reason">${esc(reason)}</p>
-        <p class="suggest-title">${esc(title)}</p>
-        <p class="suggest-author">${esc(author)}</p>
-        <div class="suggest-btns">
-          <button class="btn-suggest-read" onclick="addFromSuggest(this,'read')">📖 Già letto</button>
-          <button class="btn-suggest-wish" onclick="addFromSuggest(this,'wish')">🔖 Da leggere</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  grid.innerHTML=results.map(({item,reason})=>suggestCard(item,reason)).join('');
 }
+
+// ── Search preview panel ──────────────────────────────────────────────────────
+let previewBook = null;
+
+function openPreview(bookData){
+  previewBook = bookData;
+
+  const cover = bookData.cover || '';
+  const img = document.getElementById('preview-cover');
+  const ph = document.getElementById('preview-cover-ph');
+  if(cover){ img.src=cover; img.style.display='block'; ph.style.display='none'; }
+  else { img.style.display='none'; ph.style.display='flex'; }
+
+  // Blurred background
+  const blur = document.getElementById('preview-blur');
+  blur.style.backgroundImage = cover ? `url(${cover})` : 'none';
+
+  document.getElementById('preview-title').textContent = bookData.title || '';
+  document.getElementById('preview-author').textContent = bookData.author || '';
+
+  // Meta: year + pages + publisher (from full fetch if googleId available)
+  document.getElementById('preview-meta').textContent = bookData.year || '';
+  document.getElementById('preview-tags').innerHTML = '';
+
+  const desc = bookData.description || '';
+  const descEl = document.getElementById('preview-desc');
+  descEl.textContent = desc || 'Nessuna descrizione disponibile.';
+  descEl.className = 'preview-desc' + (desc.length > 300 ? ' collapsed' : '');
+  const readMoreBtn = document.getElementById('preview-read-more');
+  readMoreBtn.style.display = desc.length > 300 ? 'block' : 'none';
+  readMoreBtn.textContent = 'Leggi tutto ↓';
+
+  const exRead = books.some(b=>b.googleId===bookData.googleId&&b.shelf==='read');
+  const exWish = books.some(b=>b.googleId===bookData.googleId&&b.shelf==='wish');
+  const btnRead = document.getElementById('preview-btn-read');
+  const btnWish = document.getElementById('preview-btn-wish');
+  btnRead.disabled = exRead; btnRead.textContent = exRead ? '✓ Già aggiunto' : '📖 Già letto';
+  btnWish.disabled = exWish; btnWish.textContent = exWish ? '✓ In lista' : '🔖 Da leggere';
+
+  document.getElementById('preview-overlay').classList.add('visible');
+
+  // Fetch full details if we have a googleId (categories, page count, publisher)
+  if(bookData.googleId) fetchPreviewDetails(bookData.googleId);
+}
+
+async function fetchPreviewDetails(googleId){
+  try{
+    const data = await fetch(`https://www.googleapis.com/books/v1/volumes/${googleId}`).then(r=>r.json());
+    const info = data.volumeInfo || {};
+
+    // Update meta line
+    const parts = [];
+    if(info.publishedDate) parts.push(info.publishedDate.substring(0,4));
+    if(info.pageCount) parts.push(info.pageCount + ' pagine');
+    if(info.publisher) parts.push(info.publisher);
+    document.getElementById('preview-meta').textContent = parts.join(' · ');
+
+    // Categories/tags
+    const cats = info.categories || [];
+    document.getElementById('preview-tags').innerHTML = cats.slice(0,4)
+      .map(cat=>`<span class="preview-tag">${cat}</span>`).join('');
+
+    // Full description
+    if(info.description){
+      previewBook.description = info.description;
+      const descEl = document.getElementById('preview-desc');
+      descEl.textContent = info.description;
+      descEl.className = 'preview-desc' + (info.description.length > 300 ? ' collapsed' : '');
+      const readMoreBtn = document.getElementById('preview-read-more');
+      readMoreBtn.style.display = info.description.length > 300 ? 'block' : 'none';
+    }
+  }catch(e){}
+}
+
+function togglePreviewDesc(){
+  const descEl = document.getElementById('preview-desc');
+  const btn = document.getElementById('preview-read-more');
+  const isCollapsed = descEl.classList.contains('collapsed');
+  descEl.classList.toggle('collapsed', !isCollapsed);
+  btn.textContent = isCollapsed ? 'Mostra meno ↑' : 'Leggi tutto ↓';
+}
+
+function closePreview(){
+  document.getElementById('preview-overlay').classList.remove('visible');
+  previewBook = null;
+}
+
+function addFromPreview(shelf){
+  if(!previewBook) return;
+  closePreview();
+  startAdd(previewBook, shelf);
+}
+
+document.getElementById('preview-overlay').addEventListener('click', e=>{
+  if(e.target===document.getElementById('preview-overlay')) closePreview();
+});
 
 function addFromSuggest(btn, shelf){
   const card=btn.closest('.suggest-card');
   const bookData={
     googleId:card.dataset.id, title:card.dataset.title,
-    author:card.dataset.author, year:'', cover:card.dataset.cover,
-    description:card.dataset.desc
+    author:card.dataset.author, year:card.dataset.year,
+    cover:card.dataset.cover, description:card.dataset.desc
   };
   startAdd(bookData, shelf);
 }
