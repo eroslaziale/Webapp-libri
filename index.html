@@ -1198,7 +1198,7 @@ async function saveQuote(){
 async function deleteQuote(qid){
   if(!confirm('Eliminare questa citazione?'))return;
   const {error}=await sb.from('quotes').delete().eq('id',qid);
-  if(error){showToast('Errore nell'eliminazione.');return;}
+  if(error){showToast("Errore nell'eliminazione.");return;}
   currentQuotes=currentQuotes.filter(q=>q.id!==qid);
   renderQuotes();
   showToast('Citazione eliminata.');
