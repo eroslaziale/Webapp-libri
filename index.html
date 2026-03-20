@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>La Mia Libreria</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1A1410">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Libreria">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -262,6 +269,8 @@
   .btn-close-d:hover{border-color:var(--ink);color:var(--ink);}
   .btn-mark-read{flex:2;min-width:120px;padding:12px;background:var(--amber);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#fff;cursor:pointer;transition:background .2s;}
   .btn-mark-read:hover{background:#A06E10;}
+  .btn-start-reading{flex:2;min-width:120px;padding:12px;background:#185FA5;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#fff;cursor:pointer;transition:background .2s;}
+  .btn-start-reading:hover{background:#0C447C;}
   .btn-del{flex:1;min-width:80px;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--rust);cursor:pointer;transition:all .15s;}
   .btn-del:hover{background:var(--rust);color:#fff;border-color:var(--rust);}
 
@@ -313,6 +322,40 @@
   .btn-cancel-quote:hover{border-color:var(--ink-muted);color:var(--ink);}
   .quotes-loading{font-size:13px;color:var(--ink-light);text-align:center;padding:8px 0;}
 
+  /* ── Reviews section in preview ── */
+  .preview-reviews{border-top:1px solid var(--border);margin-top:0;background:var(--cream);border-radius:0 0 20px 20px;}
+  .preview-reviews-inner{padding:20px 28px 0;}
+  .reviews-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .reviews-label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-light);}
+  .reviews-avg{display:flex;align-items:center;gap:8px;}
+  .reviews-avg-stars{font-size:16px;}
+  .reviews-avg-num{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ink);}
+  .reviews-avg-count{font-size:12px;color:var(--ink-light);}
+  .reviews-list{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;max-height:280px;overflow-y:auto;}
+  .review-item{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .review-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .review-item-user{font-size:12px;font-weight:500;color:var(--ink);}
+  .review-item-stars{font-size:13px;}
+  .review-item-date{font-size:11px;color:var(--ink-light);font-family:'DM Mono',monospace;}
+  .review-item-text{font-size:13px;color:var(--ink-muted);line-height:1.6;}
+  .review-item-mine{border-color:var(--amber);}
+  .review-delete-btn{background:none;border:none;color:var(--ink-light);font-size:12px;cursor:pointer;padding:0 4px;transition:color .15s;}
+  .review-delete-btn:hover{color:var(--rust);}
+  .reviews-empty{font-size:13px;color:var(--ink-light);text-align:center;padding:12px 0 4px;font-style:italic;}
+  .reviews-loading{font-size:13px;color:var(--ink-light);text-align:center;padding:12px 0;}
+  .write-review-section{background:var(--cream-dark);border-radius:10px;padding:14px;margin-bottom:4px;}
+  .write-review-title{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:10px;}
+  .write-review-stars{display:flex;gap:5px;margin-bottom:10px;}
+  .rev-star{font-size:24px;cursor:pointer;filter:grayscale(1) opacity(.3);transition:transform .15s;}
+  .rev-star.active{filter:none;}
+  .rev-star:hover{filter:none;transform:scale(1.1);}
+  .write-review-textarea{width:100%;height:70px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--cream);outline:none;resize:none;transition:border-color .2s;margin-bottom:10px;}
+  .write-review-textarea:focus{border-color:var(--amber);}
+  .btn-submit-review{padding:9px 20px;background:var(--ink);color:var(--cream);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .2s;}
+  .btn-submit-review:hover{background:#2D2420;}
+  .btn-submit-review:disabled{opacity:.5;cursor:default;}
+  .already-reviewed-note{font-size:12px;color:var(--ink-light);font-style:italic;text-align:center;padding:6px 0;}
+
   /* ── Load more ── */
   .btn-load-more{display:block;margin:16px auto 0;padding:10px 24px;background:transparent;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;transition:all .2s;}
   .btn-load-more:hover{border-color:var(--ink);color:var(--ink);}
@@ -323,6 +366,35 @@
   .toast.show{transform:translateX(-50%) translateY(0);}
   .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(245,240,232,.3);border-top-color:var(--cream);border-radius:50%;animation:spin .7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── Reading tab ── */
+  .tab-btn.tab-reading.active{color:#185FA5;border-bottom-color:#185FA5;}
+  .tab-btn.tab-reading.active .tab-badge{background:#185FA5;}
+  .reading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+  .reading-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;gap:16px;align-items:flex-start;transition:box-shadow .2s;}
+  .reading-card:hover{box-shadow:0 4px 20px rgba(26,20,16,.1);}
+  .reading-cover{width:64px;height:90px;object-fit:cover;border-radius:6px;flex-shrink:0;box-shadow:2px 4px 12px rgba(26,20,16,.2);}
+  .reading-cover-ph{width:64px;height:90px;border-radius:6px;flex-shrink:0;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:2px 4px 12px rgba(26,20,16,.1);}
+  .reading-info{flex:1;min-width:0;}
+  .reading-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.3;}
+  .reading-author{font-size:12px;color:var(--ink-muted);margin-bottom:12px;}
+  .progress-wrap{margin-bottom:10px;}
+  .progress-bar-bg{height:8px;background:var(--cream-dark);border-radius:20px;overflow:hidden;margin-bottom:6px;}
+  .progress-bar-fill{height:100%;border-radius:20px;background:linear-gradient(to right,#185FA5,#378ADD);transition:width .4s ease;}
+  .progress-labels{display:flex;justify-content:space-between;align-items:center;}
+  .progress-pct{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:#185FA5;}
+  .progress-pages{font-size:11px;color:var(--ink-light);font-family:'DM Mono',monospace;}
+  .reading-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .page-input-wrap{display:flex;align-items:center;gap:6px;flex:1;}
+  .page-input-label{font-size:11px;color:var(--ink-light);white-space:nowrap;}
+  .page-input{width:70px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);background:var(--cream);outline:none;text-align:center;transition:border-color .2s;}
+  .page-input:focus{border-color:#378ADD;}
+  .btn-update-page{padding:7px 14px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;}
+  .btn-update-page:hover{background:#0C447C;}
+  .btn-update-page:disabled{opacity:.5;cursor:default;}
+  .btn-mark-done{padding:7px 14px;background:var(--forest);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;}
+  .btn-mark-done:hover{background:#1E4029;}
+  .reading-empty{text-align:center;padding:80px 24px;}
 
   /* ── Suggestions ── */
   .tab-btn.tab-suggest.active{color:var(--amber);border-bottom-color:var(--amber);}
@@ -444,6 +516,7 @@
     <div class="tabs-row">
       <button class="tab-btn active" data-tab="read">📖 Libri letti <span class="tab-badge" id="badge-read">0</span></button>
       <button class="tab-btn tab-wish" data-tab="wish">🔖 Da leggere <span class="tab-badge" id="badge-wish">0</span></button>
+      <button class="tab-btn tab-reading" data-tab="reading">📑 In lettura <span class="tab-badge" id="badge-reading">0</span></button>
       <button class="tab-btn tab-suggest" data-tab="suggest">✨ Suggeriti</button>
     </div>
 
@@ -498,6 +571,14 @@
       <div id="books-wish"></div>
     </div>
 
+    <!-- Reading tab -->
+    <div id="tab-reading" style="display:none">
+      <div class="shelf-header">
+        <h2 class="shelf-title">In lettura</h2>
+      </div>
+      <div id="books-reading"></div>
+    </div>
+
     <!-- Suggestions tab -->
     <div id="tab-suggest" style="display:none">
       <div class="shelf-header">
@@ -547,6 +628,24 @@
         <button class="btn-preview-wish" id="preview-btn-wish" onclick="addFromPreview('wish')">🔖 Da leggere</button>
       </div>
     </div>
+    <!-- Reviews: read-only in preview -->
+    <div class="preview-reviews">
+      <div class="preview-reviews-inner">
+        <div class="reviews-header" style="margin-bottom:14px;">
+          <span class="reviews-label">💬 Recensioni degli utenti</span>
+          <div class="reviews-avg" id="preview-reviews-avg" style="display:none">
+            <span class="reviews-avg-stars" id="preview-avg-stars"></span>
+            <span class="reviews-avg-num" id="preview-avg-num"></span>
+            <span class="reviews-avg-count" id="preview-avg-count"></span>
+          </div>
+        </div>
+        <div id="preview-reviews-loading" class="reviews-loading" style="display:none">Caricamento recensioni…</div>
+        <div class="reviews-list" id="preview-reviews-list"></div>
+        <p class="already-reviewed-note" id="preview-reviews-cta" style="display:none;font-style:normal;color:var(--ink-muted);font-size:13px;text-align:center;padding:8px 0 4px;">
+          Aggiungi questo libro ai <strong>libri letti</strong> per poter scrivere una recensione.
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -566,6 +665,7 @@
     <div class="shelf-choice">
       <button class="shelf-btn" id="btn-sel-read" onclick="selectShelf('read')"><span class="sbi">📖</span>Già letto</button>
       <button class="shelf-btn" id="btn-sel-wish" onclick="selectShelf('wish')"><span class="sbi">🔖</span>Da leggere</button>
+      <button class="shelf-btn" id="btn-sel-reading" onclick="selectShelf('reading')" style="grid-column:1/-1"><span class="sbi">📑</span>Sto leggendo</button>
     </div>
     <div class="rating-area" id="rating-area">
       <p class="modal-section-label">Il tuo voto</p>
@@ -576,6 +676,13 @@
       </div>
       <p class="modal-section-label">Note di lettura <span style="opacity:.5;font-weight:300">(facoltativo)</span></p>
       <textarea class="notes-textarea" id="modal-notes" placeholder="Cosa hai pensato di questo libro?"></textarea>
+    </div>
+    <div class="reading-start-area" id="reading-start-area" style="display:none">
+      <p class="modal-section-label">Pagina di partenza <span style="opacity:.5;font-weight:300">(opzionale)</span></p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <input class="page-input" type="number" id="modal-start-page" min="0" placeholder="0" style="width:90px;">
+        <span style="font-size:13px;color:var(--ink-light)">Lascia 0 se stai iniziando dall'inizio</span>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" id="modal-cancel">Annulla</button>
@@ -632,9 +739,37 @@
       <div class="quotes-list" id="d-quotes-list"></div>
     </div>
 
+    <!-- Reviews section (only for read books) -->
+    <div class="detail-reviews-section" id="d-reviews-section" style="display:none">
+      <div class="reviews-header" style="border-top:1px solid var(--border);padding-top:18px;margin-bottom:14px;">
+        <span class="reviews-label">💬 Recensioni degli utenti</span>
+        <div class="reviews-avg" id="d-reviews-avg" style="display:none">
+          <span class="reviews-avg-stars" id="d-avg-stars"></span>
+          <span class="reviews-avg-num" id="d-avg-num"></span>
+          <span class="reviews-avg-count" id="d-avg-count"></span>
+        </div>
+      </div>
+      <div id="d-reviews-loading" class="reviews-loading" style="display:none">Caricamento recensioni…</div>
+      <div class="reviews-list" id="d-reviews-list"></div>
+      <div class="write-review-section" id="d-write-review-form">
+        <p class="write-review-title">Scrivi una recensione</p>
+        <div class="write-review-stars" id="rev-stars">
+          <span class="rev-star" data-v="1">⭐</span>
+          <span class="rev-star" data-v="2">⭐</span>
+          <span class="rev-star" data-v="3">⭐</span>
+          <span class="rev-star" data-v="4">⭐</span>
+          <span class="rev-star" data-v="5">⭐</span>
+        </div>
+        <textarea class="write-review-textarea" id="review-text" placeholder="Cosa pensi di questo libro? (opzionale)"></textarea>
+        <button class="btn-submit-review" id="btn-submit-review" onclick="submitReview()">Pubblica recensione</button>
+      </div>
+      <p class="already-reviewed-note" id="already-reviewed-note" style="display:none">Hai già recensito questo libro.</p>
+    </div>
+
     <div class="detail-actions">
       <button class="btn-close-d" id="d-close">Chiudi</button>
       <button class="btn-mark-read" id="d-mark" style="display:none">✓ Segna come letto</button>
+      <button class="btn-start-reading" id="d-start-reading" style="display:none">📑 Inizia a leggere</button>
       <button class="btn-del" id="d-del">Rimuovi</button>
     </div>
   </div>
@@ -767,7 +902,8 @@ function dbToBook(row){
   return {
     id:row.id, googleId:row.google_id, title:row.title, author:row.author||'',
     year:row.year||'', cover:row.cover||'', description:row.description||'',
-    shelf:row.shelf, rating:row.rating||0, notes:row.notes||'', addedAt:row.added_at
+    shelf:row.shelf, rating:row.rating||0, notes:row.notes||'', addedAt:row.added_at,
+    currentPage:row.current_page||0, totalPages:row.total_pages||0
   };
 }
 
@@ -777,11 +913,18 @@ async function updateNotesDB(id, notes){
   return true;
 }
 
+async function updateProgressDB(id, currentPage, totalPages){
+  const {error}=await sb.from('books').update({current_page:currentPage, total_pages:totalPages}).eq('id',id);
+  if(error){showToast('Errore nel salvataggio.');return false;}
+  return true;
+}
+
 async function insertBook(b){
   const {data,error}=await sb.from('books').insert({
     user_id:currentUser.id, google_id:b.googleId, title:b.title,
     author:b.author, year:b.year, cover:b.cover, description:b.description,
-    shelf:b.shelf, rating:b.rating, notes:b.notes, added_at:b.addedAt
+    shelf:b.shelf, rating:b.rating, notes:b.notes, added_at:b.addedAt,
+    current_page:b.currentPage||0, total_pages:b.totalPages||0
   }).select().single();
   if(error){showToast('Errore nel salvataggio.');return null;}
   return dbToBook(data);
@@ -797,14 +940,17 @@ async function deleteBookDB(id){
 function render(){
   const readList=books.filter(b=>b.shelf==='read');
   const wishList=books.filter(b=>b.shelf==='wish');
+  const readingList=books.filter(b=>b.shelf==='reading');
   document.getElementById('stat-read').textContent=readList.length;
   document.getElementById('stat-wish').textContent=wishList.length;
   document.getElementById('badge-read').textContent=readList.length;
   document.getElementById('badge-wish').textContent=wishList.length;
+  document.getElementById('badge-reading').textContent=readingList.length;
   const rated=readList.filter(b=>b.rating>0);
   document.getElementById('stat-avg').textContent=rated.length?(rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(1)+' ★':'—';
   renderRead(readList);
   renderWish(wishList);
+  renderReading(readingList);
 }
 
 function renderRead(list){
@@ -845,6 +991,81 @@ function setView(shelf, mode){
   document.getElementById('view-grid-'+shelf).classList.toggle('active',mode==='grid');
   document.getElementById('view-list-'+shelf).classList.toggle('active',mode==='list');
   render();
+}
+
+function renderReading(list){
+  const el=document.getElementById('books-reading');
+  if(!list.length){
+    el.innerHTML=`<div class="reading-empty"><div class="empty-icon">📑</div><p class="empty-title">Nessun libro in lettura</p><p class="empty-sub">Aggiungi un libro e seleziona "Sto leggendo".</p></div>`;
+    return;
+  }
+  el.innerHTML=`<div class="reading-grid">${list.map(readingCard).join('')}</div>`;
+}
+
+function readingCard(b){
+  const pct=b.totalPages>0?Math.min(100,Math.round((b.currentPage/b.totalPages)*100)):0;
+  const coverHtml=b.cover?`<img class="reading-cover" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''
+  const ph=`<div class="reading-cover-ph" style="${b.cover?'display:none':''}">📖</div>`;
+  return `<div class="reading-card">
+    ${coverHtml}${ph}
+    <div class="reading-info">
+      <p class="reading-title">${esc(b.title)}</p>
+      <p class="reading-author">${esc(b.author||'Autore sconosciuto')}</p>
+      <div class="progress-wrap">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <div class="progress-labels">
+          <span class="progress-pct">${pct}%</span>
+          <span class="progress-pages">${b.currentPage} / ${b.totalPages||'?'} pag.</span>
+        </div>
+      </div>
+      <div class="reading-controls">
+        <div class="page-input-wrap">
+          <span class="page-input-label">Pagina</span>
+          <input class="page-input" type="number" min="0" max="${b.totalPages||9999}" value="${b.currentPage}" id="pg-${b.id}">
+        </div>
+        <button class="btn-update-page" onclick="updatePage('${b.id}')">Aggiorna</button>
+        <button class="btn-mark-done" onclick="markDone('${b.id}')">✓ Finito</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function updatePage(id){
+  const input=document.getElementById('pg-'+id);
+  const b=books.find(b=>b.id===id);if(!b||!input)return;
+  const newPage=Math.max(0,parseInt(input.value)||0);
+  const btn=input.closest('.reading-controls').querySelector('.btn-update-page');
+  btn.disabled=true;btn.textContent='…';
+
+  // Use stored total pages (already fetched from Google Books on add)
+  // If still missing, try to fetch now silently
+  let total=b.totalPages;
+  if(!total && b.googleId){
+    try{
+      const volData=await fetch(`https://www.googleapis.com/books/v1/volumes/${b.googleId}`).then(r=>r.json());
+      total=volData.volumeInfo?.pageCount||0;
+    }catch(e){}
+  }
+
+  const ok=await updateProgressDB(id,newPage,total);
+  if(ok){
+    b.currentPage=newPage;
+    b.totalPages=total;
+    render();
+    showToast('📑 Pagina aggiornata!');
+  }
+  btn.disabled=false;btn.textContent='Aggiorna';
+}
+
+async function markDone(id){
+  const b=books.find(b=>b.id===id);if(!b)return;
+  // Move to read shelf, open add modal for rating
+  const {error}=await sb.from('books').update({shelf:'read',current_page:b.totalPages||b.currentPage}).eq('id',id);
+  if(error){showToast('Errore.');return;}
+  b.shelf='read';
+  render();
+  switchTab('read');
+  showToast('🎉 Libro terminato! Aggiungi un voto dal pannello dettaglio.');
 }
 
 function bookListItem(b){
@@ -904,7 +1125,8 @@ function renderResultCards(items, append=false){
     const exWish=books.some(b=>b.googleId===id&&b.shelf==='wish');
     const coverHtml=cover?`<img class="result-cover" src="${esc(cover)}" alt="${esc(title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''
     const ph=`<div class="result-cover-placeholder" style="${cover?'display:none':''}">📖</div>`;
-    return `<div class="result-card" style="cursor:pointer" data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}" data-year="${year}" data-cover="${esc(cover)}" data-desc="${esc(desc)}">
+    const pages=info.pageCount||0;
+    return `<div class="result-card" style="cursor:pointer" data-id="${esc(id)}" data-title="${esc(title)}" data-author="${esc(author)}" data-year="${year}" data-cover="${esc(cover)}" data-desc="${esc(desc)}" data-pages="${pages}">
       ${coverHtml}${ph}
       <div class="result-info">
         <p class="result-title">${esc(title)}</p>
@@ -925,7 +1147,7 @@ function renderResultCards(items, append=false){
     // avoid double-binding by checking a flag
     if(card.dataset.bound) return;
     card.dataset.bound='1';
-    const getData=()=>({googleId:card.dataset.id,title:card.dataset.title,author:card.dataset.author,year:card.dataset.year,cover:card.dataset.cover,description:card.dataset.desc});
+    const getData=()=>({googleId:card.dataset.id,title:card.dataset.title,author:card.dataset.author,year:card.dataset.year,cover:card.dataset.cover,description:card.dataset.desc,totalPages:parseInt(card.dataset.pages)||0});
     card.querySelector('.btn-add-read').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='read'))startAdd(getData(),'read');});
     card.querySelector('.btn-add-wishlist').addEventListener('click',()=>{if(!books.some(b=>b.googleId===card.dataset.id&&b.shelf==='wish'))startAdd(getData(),'wish');});
     card.querySelector('.btn-preview-card').addEventListener('click',()=>openPreview(getData()));
@@ -1010,9 +1232,12 @@ function selectShelf(shelf){
   selShelf=shelf;
   document.getElementById('btn-sel-read').className='shelf-btn'+(shelf==='read'?' sel-read':'');
   document.getElementById('btn-sel-wish').className='shelf-btn'+(shelf==='wish'?' sel-wish':'');
+  document.getElementById('btn-sel-reading').className='shelf-btn'+(shelf==='reading'?' sel-read':'');
   document.getElementById('rating-area').classList.toggle('open',shelf==='read');
+  document.getElementById('reading-start-area').style.display=shelf==='reading'?'block':'none';
   document.getElementById('modal-confirm').disabled=false;
-  document.getElementById('modal-confirm').textContent=shelf==='read'?'Aggiungi ai letti':'Aggiungi alla lista';
+  const labels={read:'Aggiungi ai letti',wish:'Aggiungi alla lista',reading:'Inizia a leggere'};
+  document.getElementById('modal-confirm').textContent=labels[shelf]||'Aggiungi';
 }
 
 document.getElementById('star-rating').addEventListener('mouseover',e=>{const s=e.target.closest('.star');if(!s)return;document.querySelectorAll('#star-rating .star').forEach((x,i)=>x.classList.toggle('active',i<parseInt(s.dataset.v)));});
@@ -1022,24 +1247,50 @@ function highlightStars(n){document.querySelectorAll('#star-rating .star').forEa
 
 document.getElementById('modal-cancel').addEventListener('click',closeModal);
 document.getElementById('add-modal').addEventListener('click',e=>{if(e.target===document.getElementById('add-modal'))closeModal();});
-function closeModal(){document.getElementById('add-modal').classList.remove('visible');pending=null;selShelf=null;selRating=0;wishToRemoveId=null;}
+function closeModal(){
+  document.getElementById('add-modal').classList.remove('visible');
+  document.getElementById('reading-start-area').style.display='none';
+  document.getElementById('modal-start-page').value='';
+  pending=null;selShelf=null;selRating=0;wishToRemoveId=null;
+}
 
 document.getElementById('modal-confirm').addEventListener('click',async()=>{
   if(!pending||!selShelf)return;
   const btn=document.getElementById('modal-confirm');
   btn.disabled=true;btn.textContent='Salvataggio…';
   const notes=document.getElementById('modal-notes').value.trim();
+  // Fetch total pages from Google Books if adding as "reading" and we have a googleId
+  let totalPages = pending.totalPages || 0;
+  if(selShelf==='reading' && pending.googleId && !totalPages){
+    try{
+      const volData = await fetch(`https://www.googleapis.com/books/v1/volumes/${pending.googleId}`).then(r=>r.json());
+      totalPages = volData.volumeInfo?.pageCount || 0;
+    }catch(e){}
+  }
+
+  const startPage=selShelf==='reading'?Math.max(0,parseInt(document.getElementById('modal-start-page').value)||0):0;
   const newBook={
     googleId:pending.googleId,title:pending.title,author:pending.author,
     year:pending.year,cover:pending.cover,description:pending.description,
     shelf:selShelf,rating:selShelf==='read'?selRating:0,
-    notes:selShelf==='read'?notes:'',addedAt:Date.now()
+    notes:selShelf==='read'?notes:'',addedAt:Date.now(),
+    currentPage:startPage,totalPages
   };
 
-  // If moving from wish → read, delete old wish entry first
+  // If moving from wish → read/reading, delete old wish entry first
+  // Also remove any existing "wish" copy if adding as "reading"
   if(wishToRemoveId){
     await deleteBookDB(wishToRemoveId);
     books=books.filter(b=>b.id!==wishToRemoveId);
+  }
+
+  // If adding as "reading", also remove any existing "wish" copy of same book
+  if(selShelf==='reading' && pending.googleId){
+    const existingWish=books.find(b=>b.googleId===pending.googleId && b.shelf==='wish');
+    if(existingWish){
+      await deleteBookDB(existingWish.id);
+      books=books.filter(b=>b.id!==existingWish.id);
+    }
   }
 
   const saved=await insertBook(newBook);
@@ -1047,8 +1298,9 @@ document.getElementById('modal-confirm').addEventListener('click',async()=>{
     books.unshift(saved);
     const t=pending.title,sh=selShelf;
     closeModal();render();
-    switchTab(sh==='read'?'read':'wish');
-    showToast(`${sh==='read'?'📖':'🔖'} "${t}" aggiunto ${sh==='read'?'ai letti':'alla lista'}!`);
+    switchTab(sh==='read'?'read':sh==='reading'?'reading':'wish');
+    const toastMsg={read:`📖 "${t}" aggiunto ai letti!`,wish:`🔖 "${t}" aggiunto alla lista!`,reading:`📑 "${t}" aggiunto in lettura!`};
+    showToast(toastMsg[sh]||'Aggiunto!');
     // update search result buttons
     document.querySelectorAll('#results-grid .result-card').forEach(card=>{
       if(card.dataset.title!==t)return;
@@ -1075,8 +1327,10 @@ function openDetail(id){
   if(b.cover){img.src=b.cover;img.style.display='block';ph.style.display='none';}
   else{img.style.display='none';ph.style.display='flex';}
   const tag=document.getElementById('d-tag');
-  tag.className='detail-shelf-tag '+(b.shelf==='read'?'read':'wish');
-  tag.textContent=b.shelf==='read'?'📖 Letto':'🔖 Da leggere';
+  const tagClasses={read:'read',wish:'wish',reading:'wish'};
+  const tagLabels={read:'📖 Letto',wish:'🔖 Da leggere',reading:'📑 In lettura'};
+  tag.className='detail-shelf-tag '+(tagClasses[b.shelf]||'wish');
+  tag.textContent=tagLabels[b.shelf]||'';
   document.getElementById('d-title').textContent=b.title;
   document.getElementById('d-author').textContent=b.author||'Autore sconosciuto';
   document.getElementById('d-meta').textContent=b.year||'';
@@ -1089,7 +1343,7 @@ function openDetail(id){
   const notesDisplay=document.getElementById('d-notes-display');
   const notesSection=document.getElementById('d-notes-section');
   // Hide notes section for wishlist books (no notes)
-  notesSection.style.display=b.shelf==='wish'?'none':'block';
+  notesSection.style.display=b.shelf==='read'?'block':'none';
   if(b.shelf==='read'){
     notesDisplay.textContent=b.notes||'Nessuna nota aggiunta.';
     notesDisplay.className='notes-display'+(b.notes?'':' empty');
@@ -1097,6 +1351,7 @@ function openDetail(id){
     cancelNotesEdit();
   }
   document.getElementById('d-mark').style.display=b.shelf==='wish'?'block':'none';
+  document.getElementById('d-start-reading').style.display=b.shelf==='wish'?'block':'none';
 
   // Quotes section
   const quotesSection=document.getElementById('d-quotes-section');
@@ -1111,6 +1366,15 @@ function openDetail(id){
     quotesSection.style.display='none';
   }
 
+  // Reviews section (only for read books)
+  const reviewsSection=document.getElementById('d-reviews-section');
+  if(b.shelf==='read' && b.googleId){
+    reviewsSection.style.display='block';
+    loadDetailReviews(b.googleId);
+  } else {
+    reviewsSection.style.display='none';
+  }
+
   document.getElementById('detail-overlay').classList.add('visible');
 }
 
@@ -1122,6 +1386,13 @@ document.getElementById('d-mark').addEventListener('click',()=>{
   document.getElementById('detail-overlay').classList.remove('visible');
   wishToRemoveId=b.id;
   startAdd({googleId:b.googleId,title:b.title,author:b.author,year:b.year,cover:b.cover,description:b.description},'read');
+});
+
+document.getElementById('d-start-reading').addEventListener('click',()=>{
+  const b=books.find(x=>x.id===detailId);if(!b)return;
+  document.getElementById('detail-overlay').classList.remove('visible');
+  wishToRemoveId=b.id;
+  startAdd({googleId:b.googleId,title:b.title,author:b.author,year:b.year,cover:b.cover,description:b.description},'reading');
 });
 
 document.getElementById('d-del').addEventListener('click',async()=>{
@@ -1247,6 +1518,7 @@ function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   document.getElementById('tab-read').style.display=tab==='read'?'block':'none';
   document.getElementById('tab-wish').style.display=tab==='wish'?'block':'none';
+  document.getElementById('tab-reading').style.display=tab==='reading'?'block':'none';
   document.getElementById('tab-suggest').style.display=tab==='suggest'?'block':'none';
   if(tab==='suggest'&&document.getElementById('suggest-grid').innerHTML==='') loadSuggestions();
 }
@@ -1381,8 +1653,11 @@ function openPreview(bookData){
 
   document.getElementById('preview-overlay').classList.add('visible');
 
-  // Fetch full details if we have a googleId (categories, page count, publisher)
-  if(bookData.googleId) fetchPreviewDetails(bookData.googleId);
+  // Fetch full details + reviews (read-only)
+  if(bookData.googleId){
+    fetchPreviewDetails(bookData.googleId);
+    loadPreviewReviews(bookData.googleId);
+  }
 }
 
 async function fetchPreviewDetails(googleId){
@@ -1411,6 +1686,9 @@ async function fetchPreviewDetails(googleId){
       const readMoreBtn = document.getElementById('preview-read-more');
       readMoreBtn.style.display = info.description.length > 300 ? 'block' : 'none';
     }
+
+    // Store page count so modal confirm can use it directly
+    if(info.pageCount) previewBook.totalPages = info.pageCount;
   }catch(e){}
 }
 
@@ -1447,9 +1725,179 @@ function addFromSuggest(btn, shelf){
   startAdd(bookData, shelf);
 }
 
+// ── Reviews ───────────────────────────────────────────────────────────────────
+let revRating = 0;
+let currentReviews = [];
+
+// Star interactions for review form
+document.getElementById('rev-stars').addEventListener('mouseover', e=>{
+  const s=e.target.closest('.rev-star');if(!s)return;
+  const v=parseInt(s.dataset.v);
+  document.querySelectorAll('.rev-star').forEach((x,i)=>x.classList.toggle('active',i<v));
+});
+document.getElementById('rev-stars').addEventListener('mouseout', ()=>{
+  document.querySelectorAll('.rev-star').forEach((x,i)=>x.classList.toggle('active',i<revRating));
+});
+document.getElementById('rev-stars').addEventListener('click', e=>{
+  const s=e.target.closest('.rev-star');if(!s)return;
+  revRating=parseInt(s.dataset.v);
+  document.querySelectorAll('.rev-star').forEach((x,i)=>x.classList.toggle('active',i<revRating));
+});
+
+async function loadPreviewReviews(googleBookId){
+  document.getElementById('preview-reviews-loading').style.display='block';
+  document.getElementById('preview-reviews-list').innerHTML='';
+  document.getElementById('preview-reviews-avg').style.display='none';
+  document.getElementById('preview-reviews-cta').style.display='none';
+
+  const {data,error}=await sb.from('reviews').select('*').eq('google_book_id',googleBookId).order('created_at',{ascending:false});
+  document.getElementById('preview-reviews-loading').style.display='none';
+  const reviews=(!error&&data)?data:[];
+
+  // Average
+  if(reviews.length>0){
+    const avg=reviews.reduce((s,r)=>s+r.rating,0)/reviews.length;
+    document.getElementById('preview-avg-stars').textContent='⭐'.repeat(Math.round(avg));
+    document.getElementById('preview-avg-num').textContent=avg.toFixed(1);
+    document.getElementById('preview-avg-count').textContent=`(${reviews.length} ${reviews.length===1?'recensione':'recensioni'})`;
+    document.getElementById('preview-reviews-avg').style.display='flex';
+  }
+
+  const list=document.getElementById('preview-reviews-list');
+  if(!reviews.length){
+    list.innerHTML='<p class="reviews-empty">Nessuna recensione ancora.</p>';
+  } else {
+    list.innerHTML=reviews.map(r=>{
+      const username=r.user_email?r.user_email.split('@')[0]:'Utente';
+      const date=new Date(r.created_at).toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'});
+      return `<div class="review-item">
+        <div class="review-item-header">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="review-item-user">${esc(username)}</span>
+            <span class="review-item-stars">${'⭐'.repeat(r.rating)}</span>
+          </div>
+          <span class="review-item-date">${date}</span>
+        </div>
+        ${r.text?`<p class="review-item-text">${esc(r.text)}</p>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  // Show CTA only if user does NOT have this book in "read"
+  const hasRead=books.some(b=>b.googleId===googleBookId&&b.shelf==='read');
+  document.getElementById('preview-reviews-cta').style.display=hasRead?'none':'block';
+}
+
+async function loadDetailReviews(googleBookId){
+  currentReviews=[];
+  revRating=0;
+  document.querySelectorAll('.rev-star').forEach(s=>s.classList.remove('active'));
+  document.getElementById('review-text').value='';
+  document.getElementById('d-reviews-loading').style.display='block';
+  document.getElementById('d-reviews-list').innerHTML='';
+  document.getElementById('d-reviews-avg').style.display='none';
+
+  const {data,error}=await sb.from('reviews').select('*').eq('google_book_id',googleBookId).order('created_at',{ascending:false});
+  document.getElementById('d-reviews-loading').style.display='none';
+  if(error||!data){renderDetailReviews([],googleBookId);return;}
+  currentReviews=data;
+  renderDetailReviews(data,googleBookId);
+}
+
+function renderDetailReviews(reviews, googleBookId){
+  const list=document.getElementById('d-reviews-list');
+  const avgWrap=document.getElementById('d-reviews-avg');
+  const alreadyNote=document.getElementById('already-reviewed-note');
+  const writeForm=document.getElementById('d-write-review-form');
+
+  // Average rating
+  if(reviews.length>0){
+    const avg=reviews.reduce((s,r)=>s+r.rating,0)/reviews.length;
+    document.getElementById('d-avg-stars').textContent='⭐'.repeat(Math.round(avg));
+    document.getElementById('d-avg-num').textContent=avg.toFixed(1);
+    document.getElementById('d-avg-count').textContent=`(${reviews.length} ${reviews.length===1?'recensione':'recensioni'})`;
+    avgWrap.style.display='flex';
+  }
+
+  // Check if current user already reviewed
+  const myReview=reviews.find(r=>r.user_id===currentUser?.id);
+  writeForm.style.display=myReview?'none':'block';
+  alreadyNote.style.display=myReview?'block':'none';
+
+  if(!reviews.length){
+    list.innerHTML='<p class="reviews-empty">Nessuna recensione ancora. Sii il primo!</p>';
+    return;
+  }
+
+  list.innerHTML=reviews.map(r=>{
+    const isMine=r.user_id===currentUser?.id;
+    const username=r.user_email?r.user_email.split('@')[0]:'Utente';
+    const date=new Date(r.created_at).toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'});
+    return `<div class="review-item${isMine?' review-item-mine':''}">
+      <div class="review-item-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="review-item-user">${esc(username)}</span>
+          <span class="review-item-stars">${'⭐'.repeat(r.rating)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="review-item-date">${date}</span>
+          ${isMine?`<button class="review-delete-btn" onclick="deleteReview('${r.id}')">✕</button>`:''}
+        </div>
+      </div>
+      ${r.text?`<p class="review-item-text">${esc(r.text)}</p>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function submitReview(){
+  if(!revRating){showToast('Seleziona almeno una stella.');return;}
+  const bkSub=books.find(x=>x.id===detailId);
+  if(!bkSub?.googleId){showToast('Libro non trovato.');return;}
+  const btn=document.getElementById('btn-submit-review');
+  const text=document.getElementById('review-text').value.trim();
+  btn.disabled=true;btn.textContent='Pubblicazione…';
+
+  const {data,error}=await sb.from('reviews').insert({
+    user_id:currentUser.id,
+    user_email:currentUser.email,
+    google_book_id:bkSub.googleId,
+    book_title:bkSub.title||'',
+    book_author:bkSub.author||'',
+    book_cover:bkSub.cover||'',
+    book_year:bkSub.year||'',
+    rating:revRating,
+    text,
+    created_at:Date.now()
+  }).select().single();
+
+  btn.disabled=false;btn.textContent='Pubblica recensione';
+  if(error){showToast('Errore nella pubblicazione.');return;}
+  currentReviews.unshift(data);
+  const bk=books.find(x=>x.id===detailId);
+  if(bk?.googleId) renderDetailReviews(currentReviews, bk.googleId);
+  showToast('💬 Recensione pubblicata!');
+}
+
+async function deleteReview(reviewId){
+  if(!confirm('Eliminare questa recensione?'))return;
+  const {error}=await sb.from('reviews').delete().eq('id',reviewId);
+  if(error){showToast('Errore.');return;}
+  currentReviews=currentReviews.filter(r=>r.id!==reviewId);
+  const b=books.find(x=>x.id===detailId);
+  if(b?.googleId) renderDetailReviews(currentReviews, b.googleId);
+  showToast('Recensione eliminata.');
+}
+
 // ── Enter key on auth inputs ───────────────────────────────────────────────────
 document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 document.getElementById('signup-password').addEventListener('keydown',e=>{if(e.key==='Enter')doSignup();});
+
+// ── PWA Service Worker ─────────────────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
