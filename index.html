@@ -69,6 +69,14 @@
   .loading-logo{font-family:'Playfair Display',serif;font-size:24px;color:var(--ink);}
   .loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;}
 
+  /* ── Page system ── */
+  .page{display:none;}
+  .page.active{display:block;}
+  .page-header{display:flex;align-items:center;gap:12px;padding:20px 24px 0;max-width:1200px;margin:0 auto;}
+  .btn-back{background:transparent;border:none;color:var(--ink-muted);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 0;transition:color .15s;}
+  .btn-back:hover{color:var(--ink);}
+  .btn-back svg{flex-shrink:0;}
+
   /* ── Hero ── */
   .hero{text-align:center;margin-bottom:48px;}
   .hero-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;}
@@ -429,6 +437,13 @@
   .profile-close-btn{background:none;border:none;font-size:20px;color:var(--ink-light);cursor:pointer;padding:4px;line-height:1;transition:color .15s;}
   .profile-close-btn:hover{color:var(--ink);}
 
+  /* ── Page system ── */
+  .page{display:none;}
+  .page.active{display:block;}
+  .page-header{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+  .btn-back{display:flex;align-items:center;gap:6px;padding:8px 14px;background:transparent;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;transition:all .15s;}
+  .btn-back:hover{border-color:var(--ink);color:var(--ink);}
+
   /* ── Toast ── */
   .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--cream);padding:12px 24px;border-radius:100px;font-size:14px;font-weight:500;z-index:300;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
@@ -560,11 +575,12 @@
 <!-- Main App -->
 <div id="app">
   <header>
-    <div class="logo">
+    <div class="logo" onclick="navTo('home')" style="cursor:pointer">
       <div class="logo-icon">📚</div>
       La Mia Libreria
     </div>
     <nav class="header-nav" id="header-nav">
+      <button class="nav-btn" data-navtab="home" onclick="navTo('home')">🏠 Home</button>
       <button class="nav-btn active" data-navtab="read" onclick="navTo('read')">📖 Letti</button>
       <button class="nav-btn" data-navtab="wish" onclick="navTo('wish')">🔖 Da leggere</button>
       <button class="nav-btn" data-navtab="reading" onclick="navTo('reading')">📑 In lettura</button>
@@ -600,6 +616,10 @@
   <!-- Bottom navigation for mobile -->
   <nav class="bottom-nav" id="bottom-nav">
     <div class="bottom-nav-inner">
+      <button class="bottom-nav-btn" data-navtab="home" onclick="navTo('home')">
+        <span class="bn-icon">🏠</span>
+        <span class="bn-label">Home</span>
+      </button>
       <button class="bottom-nav-btn active" data-navtab="read" onclick="navTo('read')">
         <span class="bn-icon">📖</span>
         <span class="bn-label">Letti</span>
@@ -623,39 +643,60 @@
   </nav>
 
   <main>
-    <div class="hero">
-      <p class="hero-eyebrow">La tua collezione personale</p>
-      <h1>Ogni libro letto<br>è un <em>viaggio vissuto</em></h1>
-      <p class="hero-sub">Tieni traccia dei libri letti e di quelli che vuoi leggere — ovunque tu sia.</p>
-    </div>
 
-    <!-- Search -->
-    <div class="search-section">
-      <label class="search-label" for="search-input">Cerca un libro da aggiungere</label>
-      <div class="search-row">
-        <input class="search-input" id="search-input" type="text" placeholder="Titolo, autore, ISBN…" autocomplete="off"/>
-        <button class="btn-search" id="search-btn">
-          <span id="search-btn-text">Cerca</span>
-          <svg id="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </button>
+    <!-- ── HOME PAGE ── -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <p class="hero-eyebrow">La tua collezione personale</p>
+        <h1>Ogni libro letto<br>è un <em>viaggio vissuto</em></h1>
+        <p class="hero-sub">Tieni traccia dei libri letti e di quelli che vuoi leggere — ovunque tu sia.</p>
       </div>
-      <div class="search-loading" id="search-loading">Ricerca in corso…</div>
-      <div id="search-results">
-        <p class="results-title" id="results-label">Risultati</p>
-        <div class="results-grid" id="results-grid"></div>
-        <button class="btn-load-more" id="btn-load-more" style="display:none" onclick="loadMoreResults()">Carica altri risultati</button>
+
+      <!-- Search -->
+      <div class="search-section">
+        <label class="search-label" for="search-input">Cerca un libro da aggiungere</label>
+        <div class="search-row">
+          <input class="search-input" id="search-input" type="text" placeholder="Titolo, autore, ISBN…" autocomplete="off"/>
+          <button class="btn-search" id="search-btn">
+            <span id="search-btn-text">Cerca</span>
+            <svg id="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </div>
+        <div class="search-loading" id="search-loading">Ricerca in corso…</div>
+        <div id="search-results">
+          <p class="results-title" id="results-label">Risultati</p>
+          <div class="results-grid" id="results-grid"></div>
+          <button class="btn-load-more" id="btn-load-more" style="display:none" onclick="loadMoreResults()">Carica altri risultati</button>
+        </div>
+      </div>
+
+      <!-- Quick stats on home -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:32px;">
+        <div onclick="navTo('read')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:box-shadow .2s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(26,20,16,.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:24px;margin-bottom:6px;">📖</div>
+          <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--ink)" id="home-stat-read">0</div>
+          <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Libri letti</div>
+        </div>
+        <div onclick="navTo('wish')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:box-shadow .2s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(26,20,16,.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:24px;margin-bottom:6px;">🔖</div>
+          <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--ink)" id="home-stat-wish">0</div>
+          <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Da leggere</div>
+        </div>
+        <div onclick="navTo('reading')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:box-shadow .2s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(26,20,16,.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:24px;margin-bottom:6px;">📑</div>
+          <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--ink)" id="home-stat-reading">0</div>
+          <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">In lettura</div>
+        </div>
+        <div onclick="navTo('suggest')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:box-shadow .2s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(26,20,16,.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:24px;margin-bottom:6px;">✨</div>
+          <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--amber)">→</div>
+          <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Suggeriti</div>
+        </div>
       </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs-row">
-      <button class="tab-btn active" data-tab="read">📖 Libri letti <span class="tab-badge" id="badge-read">0</span></button>
-      <button class="tab-btn tab-wish" data-tab="wish">🔖 Da leggere <span class="tab-badge" id="badge-wish">0</span></button>
-      <button class="tab-btn tab-reading" data-tab="reading">📑 In lettura <span class="tab-badge" id="badge-reading">0</span></button>
-      <button class="tab-btn tab-suggest" data-tab="suggest">✨ Suggeriti</button>
-    </div>
-
-    <div id="tab-read">
+    <!-- ── LIBRI LETTI ── -->
+    <div class="page" id="page-read">
       <div class="shelf-header">
         <h2 class="shelf-title">Libri letti</h2>
         <div class="shelf-controls">
@@ -683,7 +724,8 @@
       <div id="books-read"></div>
     </div>
 
-    <div id="tab-wish" style="display:none">
+    <!-- ── DA LEGGERE ── -->
+    <div class="page" id="page-wish">
       <div class="shelf-header">
         <h2 class="shelf-title">Da leggere</h2>
         <div class="shelf-controls">
@@ -706,16 +748,16 @@
       <div id="books-wish"></div>
     </div>
 
-    <!-- Reading tab -->
-    <div id="tab-reading" style="display:none">
+    <!-- ── IN LETTURA ── -->
+    <div class="page" id="page-reading">
       <div class="shelf-header">
         <h2 class="shelf-title">In lettura</h2>
       </div>
       <div id="books-reading"></div>
     </div>
 
-    <!-- Suggestions tab -->
-    <div id="tab-suggest" style="display:none">
+    <!-- ── SUGGERITI ── -->
+    <div class="page" id="page-suggest">
       <div class="shelf-header">
         <h2 class="shelf-title">Suggeriti per te</h2>
         <button class="btn-refresh-suggest" id="btn-refresh-suggest" onclick="loadSuggestions()">
@@ -734,6 +776,7 @@
       </div>
       <div id="suggest-grid" class="suggest-grid"></div>
     </div>
+
   </main>
 </div>
 
@@ -1140,20 +1183,27 @@ function render(){
   const readList=books.filter(b=>b.shelf==='read');
   const wishList=books.filter(b=>b.shelf==='wish');
   const readingList=books.filter(b=>b.shelf==='reading');
-  document.getElementById('stat-read').textContent=readList.length;
-  document.getElementById('stat-wish').textContent=wishList.length;
-  document.getElementById('badge-read').textContent=readList.length;
-  document.getElementById('badge-wish').textContent=wishList.length;
-  document.getElementById('badge-reading').textContent=readingList.length;
-  // Bottom nav badges
+  const rated=readList.filter(b=>b.rating>0);
+  const avgStr=rated.length?(rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(1)+' ★':'—';
+  // Header stats (safe)
+  const elStatRead=document.getElementById('stat-read');if(elStatRead)elStatRead.textContent=readList.length;
+  const elStatWish=document.getElementById('stat-wish');if(elStatWish)elStatWish.textContent=wishList.length;
+  const elStatAvg=document.getElementById('stat-avg');if(elStatAvg)elStatAvg.textContent=avgStr;
+  // Tab badges (safe)
+  const elBadgeRead=document.getElementById('badge-read');if(elBadgeRead)elBadgeRead.textContent=readList.length;
+  const elBadgeWish=document.getElementById('badge-wish');if(elBadgeWish)elBadgeWish.textContent=wishList.length;
+  const elBadgeReading=document.getElementById('badge-reading');if(elBadgeReading)elBadgeReading.textContent=readingList.length;
+  // Home stat cards (safe)
+  const hsr=document.getElementById('home-stat-read');if(hsr)hsr.textContent=readList.length;
+  const hsw=document.getElementById('home-stat-wish');if(hsw)hsw.textContent=wishList.length;
+  const hsrl=document.getElementById('home-stat-reading');if(hsrl)hsrl.textContent=readingList.length;
+  // Bottom nav badges (safe)
   const bnRead=document.getElementById('bn-badge-read');
   const bnWish=document.getElementById('bn-badge-wish');
   const bnReading=document.getElementById('bn-badge-reading');
   if(bnRead){bnRead.textContent=readList.length;bnRead.classList.toggle('visible',readList.length>0);}
   if(bnWish){bnWish.textContent=wishList.length;bnWish.classList.toggle('visible',wishList.length>0);}
   if(bnReading){bnReading.textContent=readingList.length;bnReading.classList.toggle('visible',readingList.length>0);}
-  const rated=readList.filter(b=>b.rating>0);
-  document.getElementById('stat-avg').textContent=rated.length?(rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(1)+' ★':'—';
   renderRead(readList);
   renderWish(wishList);
   renderReading(readingList);
@@ -1305,7 +1355,7 @@ async function markDone(id){
   if(error){showToast('Errore.');return;}
   b.shelf='read';
   render();
-  switchTab('read');
+  navTo('read');
   showToast('🎉 Libro terminato! Aggiungi un voto dal pannello dettaglio.');
 }
 
@@ -1539,7 +1589,7 @@ document.getElementById('modal-confirm').addEventListener('click',async()=>{
     books.unshift(saved);
     const t=pending.title,sh=selShelf;
     closeModal();render();
-    switchTab(sh==='read'?'read':sh==='reading'?'reading':'wish');
+    navTo(sh==='read'?'read':sh==='reading'?'reading':'wish');
     const toastMsg={read:`📖 "${t}" aggiunto ai letti!`,wish:`🔖 "${t}" aggiunto alla lista!`,reading:`📑 "${t}" aggiunto in lettura!`};
     showToast(toastMsg[sh]||'Aggiunto!');
     // update search result buttons
@@ -1753,25 +1803,26 @@ async function saveNotes(){
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────────────
-document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.tab)));
-function switchTab(tab){
-  curTab=tab;
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-  document.getElementById('tab-read').style.display=tab==='read'?'block':'none';
-  document.getElementById('tab-wish').style.display=tab==='wish'?'block':'none';
-  document.getElementById('tab-reading').style.display=tab==='reading'?'block':'none';
-  document.getElementById('tab-suggest').style.display=tab==='suggest'?'block':'none';
-  if(tab==='suggest'&&document.getElementById('suggest-grid').innerHTML==='') loadSuggestions();
-  // Sync header nav + bottom nav active state
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.navtab===tab));
-  document.querySelectorAll('.bottom-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.navtab===tab));
-}
+// ── Page navigation ───────────────────────────────────────────────────────────
+const PAGES=['home','read','wish','reading','suggest'];
+
+function switchTab(tab){ navTo(tab); } // keep backward compat
 
 function navTo(tab){
-  switchTab(tab);
-  // Scroll to the tabs row smoothly
-  const tabsRow=document.querySelector('.tabs-row');
-  if(tabsRow) tabsRow.scrollIntoView({behavior:'smooth',block:'start'});
+  curTab=tab;
+  const pageId=tab==='home'?'home':tab;
+  PAGES.forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el) el.classList.toggle('active',p===pageId);
+  });
+  // Sync header nav
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.navtab===tab));
+  // Sync bottom nav
+  document.querySelectorAll('.bottom-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.navtab===tab));
+  // Load suggestions on first visit
+  if(tab==='suggest'&&document.getElementById('suggest-grid').innerHTML==='') loadSuggestions();
+  // Scroll to top
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ── Filters & Sort ─────────────────────────────────────────────────────────────
