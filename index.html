@@ -490,13 +490,28 @@
   .btn-refresh-suggest:hover{border-color:var(--ink);color:var(--ink);}
   .btn-refresh-suggest:disabled{opacity:.5;cursor:default;}
 
-  /* ── Header nav ── */
+  /* ── Header nav (desktop) ── */
   .header-nav{display:flex;align-items:center;gap:4px;flex:1;justify-content:center;}
   .nav-btn{padding:7px 14px;background:transparent;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:rgba(245,240,232,.55);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap;}
   .nav-btn:hover{background:rgba(255,255,255,.08);color:rgba(245,240,232,.9);}
   .nav-btn.active{background:rgba(255,255,255,.12);color:var(--amber-light);}
-
   @media(max-width:900px){.header-nav{display:none;}}
+
+  /* ── Bottom nav (mobile) ── */
+  .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);border-top:1px solid rgba(255,255,255,.08);z-index:100;padding:0 0 env(safe-area-inset-bottom,0);}
+  .bottom-nav-inner{display:flex;align-items:stretch;}
+  .bottom-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 8px;background:transparent;border:none;cursor:pointer;color:rgba(245,240,232,.45);transition:color .15s;min-width:0;}
+  .bottom-nav-btn.active{color:var(--amber-light);}
+  .bottom-nav-btn .bn-icon{font-size:18px;line-height:1;}
+  .bottom-nav-btn .bn-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+  .bottom-nav-btn .bn-badge{display:none;position:absolute;top:6px;right:calc(50% - 16px);background:var(--amber);color:#fff;font-size:9px;font-weight:700;border-radius:20px;padding:1px 5px;min-width:16px;text-align:center;}
+  .bottom-nav-btn{position:relative;}
+  .bottom-nav-btn .bn-badge.visible{display:block;}
+  @media(max-width:900px){
+    .bottom-nav{display:block;}
+    main{padding-bottom:calc(72px + env(safe-area-inset-bottom,0));}
+  }
+
   @media(max-width:600px){
     .search-row{flex-direction:column;}
     .books-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;}
@@ -581,6 +596,31 @@
       </div>
     </div>
   </header>
+
+  <!-- Bottom navigation for mobile -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <div class="bottom-nav-inner">
+      <button class="bottom-nav-btn active" data-navtab="read" onclick="navTo('read')">
+        <span class="bn-icon">📖</span>
+        <span class="bn-label">Letti</span>
+        <span class="bn-badge" id="bn-badge-read"></span>
+      </button>
+      <button class="bottom-nav-btn" data-navtab="wish" onclick="navTo('wish')">
+        <span class="bn-icon">🔖</span>
+        <span class="bn-label">Da leggere</span>
+        <span class="bn-badge" id="bn-badge-wish"></span>
+      </button>
+      <button class="bottom-nav-btn" data-navtab="reading" onclick="navTo('reading')">
+        <span class="bn-icon">📑</span>
+        <span class="bn-label">In lettura</span>
+        <span class="bn-badge" id="bn-badge-reading"></span>
+      </button>
+      <button class="bottom-nav-btn" data-navtab="suggest" onclick="navTo('suggest')">
+        <span class="bn-icon">✨</span>
+        <span class="bn-label">Suggeriti</span>
+      </button>
+    </div>
+  </nav>
 
   <main>
     <div class="hero">
@@ -1105,6 +1145,13 @@ function render(){
   document.getElementById('badge-read').textContent=readList.length;
   document.getElementById('badge-wish').textContent=wishList.length;
   document.getElementById('badge-reading').textContent=readingList.length;
+  // Bottom nav badges
+  const bnRead=document.getElementById('bn-badge-read');
+  const bnWish=document.getElementById('bn-badge-wish');
+  const bnReading=document.getElementById('bn-badge-reading');
+  if(bnRead){bnRead.textContent=readList.length;bnRead.classList.toggle('visible',readList.length>0);}
+  if(bnWish){bnWish.textContent=wishList.length;bnWish.classList.toggle('visible',wishList.length>0);}
+  if(bnReading){bnReading.textContent=readingList.length;bnReading.classList.toggle('visible',readingList.length>0);}
   const rated=readList.filter(b=>b.rating>0);
   document.getElementById('stat-avg').textContent=rated.length?(rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(1)+' ★':'—';
   renderRead(readList);
@@ -1715,8 +1762,9 @@ function switchTab(tab){
   document.getElementById('tab-reading').style.display=tab==='reading'?'block':'none';
   document.getElementById('tab-suggest').style.display=tab==='suggest'?'block':'none';
   if(tab==='suggest'&&document.getElementById('suggest-grid').innerHTML==='') loadSuggestions();
-  // Sync header nav active state
+  // Sync header nav + bottom nav active state
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.navtab===tab));
+  document.querySelectorAll('.bottom-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.navtab===tab));
 }
 
 function navTo(tab){
