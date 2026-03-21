@@ -180,6 +180,11 @@
 
   /* ── Year group ── */
   .year-group{margin-bottom:40px;}
+  .author-group{margin-bottom:36px;}
+  .author-label{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+  .author-label-text{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--ink);white-space:nowrap;}
+  .author-label-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-light);background:var(--cream-dark);padding:2px 8px;border-radius:20px;flex-shrink:0;}
+  .author-label::after{content:'';flex:1;height:1px;background:var(--border);}
   .year-label{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
   .year-label span{font-family:'DM Mono',monospace;font-size:13px;color:var(--ink-light);letter-spacing:.05em;}
   .year-label::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -485,6 +490,13 @@
   .btn-refresh-suggest:hover{border-color:var(--ink);color:var(--ink);}
   .btn-refresh-suggest:disabled{opacity:.5;cursor:default;}
 
+  /* ── Header nav ── */
+  .header-nav{display:flex;align-items:center;gap:4px;flex:1;justify-content:center;}
+  .nav-btn{padding:7px 14px;background:transparent;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:rgba(245,240,232,.55);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap;}
+  .nav-btn:hover{background:rgba(255,255,255,.08);color:rgba(245,240,232,.9);}
+  .nav-btn.active{background:rgba(255,255,255,.12);color:var(--amber-light);}
+
+  @media(max-width:900px){.header-nav{display:none;}}
   @media(max-width:600px){
     .search-row{flex-direction:column;}
     .books-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;}
@@ -537,6 +549,12 @@
       <div class="logo-icon">📚</div>
       La Mia Libreria
     </div>
+    <nav class="header-nav" id="header-nav">
+      <button class="nav-btn active" data-navtab="read" onclick="navTo('read')">📖 Letti</button>
+      <button class="nav-btn" data-navtab="wish" onclick="navTo('wish')">🔖 Da leggere</button>
+      <button class="nav-btn" data-navtab="reading" onclick="navTo('reading')">📑 In lettura</button>
+      <button class="nav-btn" data-navtab="suggest" onclick="navTo('suggest')">✨ Suggeriti</button>
+    </nav>
     <div class="header-right">
       <div class="header-stats">
         <span>Letti: <strong id="stat-read">0</strong></span>
@@ -1100,13 +1118,48 @@ function renderRead(list){
   if(sortRead==='date-desc')f.sort((a,b)=>b.addedAt-a.addedAt);
   else if(sortRead==='date-asc')f.sort((a,b)=>a.addedAt-b.addedAt);
   else if(sortRead==='rating-desc')f.sort((a,b)=>b.rating-a.rating);
+  else if(sortRead==='author')f.sort((a,b)=>(a.author||'').localeCompare(b.author||''));
   else f.sort((a,b)=>a.title.localeCompare(b.title));
   const el=document.getElementById('books-read');
   if(!f.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📖</div><p class="empty-title">${list.length===0?'Nessun libro letto ancora':'Nessun libro con questo filtro'}</p><p class="empty-sub">${list.length===0?'Cerca un libro e aggiungilo come "già letto".':'Prova a cambiare il filtro.'}</p></div>`;return;}
+
+  // ── Author grouping mode ──
+  if(sortRead==='author'){
+    // Group by first author (normalised)
+    const byAuthor={};
+    f.forEach(b=>{
+      const key=(b.author||'Autore sconosciuto').split(',')[0].trim()||'Autore sconosciuto';
+      (byAuthor[key]=byAuthor[key]||[]).push(b);
+    });
+    const authorKeys=Object.keys(byAuthor).sort((a,b)=>a.localeCompare(b));
+    if(viewMode.read==='list'){
+      el.innerHTML=authorKeys.map(author=>`
+        <div class="author-group">
+          <div class="author-label">
+            <span class="author-label-text">${esc(author)}</span>
+            <span class="author-label-count">${byAuthor[author].length} ${byAuthor[author].length===1?'libro':'libri'}</span>
+          </div>
+          <div class="books-list">${byAuthor[author].map(bookListItem).join('')}</div>
+        </div>`).join('');
+    } else {
+      el.innerHTML=authorKeys.map(author=>`
+        <div class="author-group">
+          <div class="author-label">
+            <span class="author-label-text">${esc(author)}</span>
+            <span class="author-label-count">${byAuthor[author].length} ${byAuthor[author].length===1?'libro':'libri'}</span>
+          </div>
+          <div class="books-grid">${byAuthor[author].map(bookCard).join('')}</div>
+        </div>`).join('');
+    }
+    return;
+  }
+
+  // ── Default list view ──
   if(viewMode.read==='list'){
     el.innerHTML=`<div class="books-list">${f.map(bookListItem).join('')}</div>`;
     return;
   }
+  // ── Default grid view grouped by year ──
   const byYear={};
   f.forEach(b=>{const y=new Date(b.addedAt).getFullYear();(byYear[y]=byYear[y]||[]).push(b);});
   el.innerHTML=Object.keys(byYear).sort((a,b)=>b-a).map(y=>`<div class="year-group"><div class="year-label"><span>${y}</span></div><div class="books-grid">${byYear[y].map(bookCard).join('')}</div></div>`).join('');
@@ -1662,6 +1715,15 @@ function switchTab(tab){
   document.getElementById('tab-reading').style.display=tab==='reading'?'block':'none';
   document.getElementById('tab-suggest').style.display=tab==='suggest'?'block':'none';
   if(tab==='suggest'&&document.getElementById('suggest-grid').innerHTML==='') loadSuggestions();
+  // Sync header nav active state
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.navtab===tab));
+}
+
+function navTo(tab){
+  switchTab(tab);
+  // Scroll to the tabs row smoothly
+  const tabsRow=document.querySelector('.tabs-row');
+  if(tabsRow) tabsRow.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 // ── Filters & Sort ─────────────────────────────────────────────────────────────
@@ -1750,22 +1812,32 @@ async function loadSuggestions(){
     if(picks.length>=6) break;
   }
 
+  // Fetch associated books for each source, taking at most 3 per source
+  // This ensures diversity across multiple books rather than all from one
+  const PER_SOURCE = 3;
   for(const sourceBook of picks){
     if(!sourceBook.googleId) continue;
     try{
-      // Google Books associated volumes endpoint
       const url=`https://www.googleapis.com/books/v1/volumes/${sourceBook.googleId}/associated?maxAllowedMaturityRating=not-mature`;
       const data=await fetch(url).then(r=>r.json());
       const items=data.items||[];
+      let addedFromThis=0;
       for(const item of items){
         if(results.length>=16) break;
+        if(addedFromThis>=PER_SOURCE) break; // max 3 per source book
         if(alreadyIds.has(item.id)||seen.has(item.id)) continue;
-        if(isSameAuthor(item)) continue; // skip same-author books
+        if(isSameAuthor(item)) continue;
+        // Also skip books whose title contains the source book's title keywords
+        // (catches "Il teatro di Samuel Beckett" type results)
+        const sourceWords=sourceBook.title.toLowerCase().split(/\s+/).filter(w=>w.length>4);
+        const sugTitle=(item.volumeInfo?.title||'').toLowerCase();
+        const tooSimilar=sourceWords.some(w=>sugTitle.includes(w));
+        if(tooSimilar) continue;
         seen.add(item.id);
         results.push({item, reason:`Simile a "${sourceBook.title}"`});
+        addedFromThis++;
       }
     }catch(e){}
-    if(results.length>=16) break;
   }
 
   loading.style.display='none';
