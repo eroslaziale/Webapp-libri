@@ -160,6 +160,12 @@
   .content-topbar-title{font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:var(--text-primary);letter-spacing:-.01em;}
   .content-topbar-right{display:flex;align-items:center;gap:12px;}
   .topbar-stat{font-size:12px;color:var(--text-tertiary);}
+  .topbar-divider{width:1px;height:20px;background:var(--border);margin:0 4px;}
+  .topbar-user-btn{display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--r-full);cursor:pointer;transition:all .15s;color:var(--text-secondary);font-family:'Inter',sans-serif;font-size:13px;}
+  .topbar-user-btn:hover{background:var(--bg);border-color:var(--text-tertiary);}
+  .topbar-avatar{width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .topbar-user-name{font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .header-user{position:relative;}
   .topbar-stat strong{color:var(--ink);font-weight:600;font-family:'JetBrains Mono',monospace;}
 
   /* Dropdown (now appears from sidebar user btn) */
@@ -330,10 +336,14 @@
   .shelf-btn.sel-wish{border-color:var(--green);background:var(--green-pale);color:var(--green);}
   .rating-area{overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .25s ease;}
   .rating-area.open{max-height:200px;opacity:1;}
-  .star-rating{display:flex;gap:6px;margin-bottom:20px;}
-  .star{font-size:30px;cursor:pointer;transition:transform .15s;line-height:1;filter:grayscale(1) opacity(.3);}
-  .star.active{filter:none;}
-  .star:hover{filter:none;transform:scale(1.15);}
+  .star-rating{display:flex;gap:4px;margin-bottom:20px;align-items:center;}
+  .star{width:32px;height:32px;cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1),opacity .15s;opacity:.25;color:var(--brand);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .star svg{width:28px;height:28px;fill:currentColor;transition:fill .15s;}
+  .star.active{opacity:1;transform:scale(1.0);}
+  .star:hover{opacity:1;transform:scale(1.2);}
+  .star.active{opacity:1;}
+  .star.hovered{opacity:1;transform:scale(1.15);}
+  .star.dimmed{opacity:.2;}
   .notes-textarea{width:100%;height:80px;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:var(--cream);outline:none;resize:none;transition:border-color .2s;margin-bottom:20px;}
   .notes-textarea:focus{border-color:var(--amber);}
   .modal-actions{display:flex;gap:10px;}
@@ -472,9 +482,10 @@
   .write-review-section{background:var(--cream-dark);border-radius:10px;padding:14px;margin-bottom:4px;}
   .write-review-title{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:10px;}
   .write-review-stars{display:flex;gap:5px;margin-bottom:10px;}
-  .rev-star{font-size:24px;cursor:pointer;filter:grayscale(1) opacity(.3);transition:transform .15s;}
-  .rev-star.active{filter:none;}
-  .rev-star:hover{filter:none;transform:scale(1.1);}
+  .rev-star{width:28px;height:28px;cursor:pointer;opacity:.25;color:var(--brand);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:transform .18s cubic-bezier(.34,1.56,.64,1),opacity .15s;background:none;border:none;padding:0;}
+  .rev-star svg{width:24px;height:24px;fill:currentColor;}
+  .rev-star.active{opacity:1;}
+  .rev-star:hover{opacity:1;transform:scale(1.15);}
   .write-review-textarea{width:100%;height:70px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);background:var(--cream);outline:none;resize:none;transition:border-color .2s;margin-bottom:10px;}
   .write-review-textarea:focus{border-color:var(--amber);}
   .btn-submit-review{padding:9px 20px;background:var(--ink);color:var(--cream);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .2s;}
@@ -717,17 +728,24 @@
         <span class="si-icon">✨</span> Suggeriti
       </button>
     </nav>
-    <div class="sidebar-bottom">
-      <div class="header-user" id="header-user" style="position:relative;">
-        <button class="sidebar-user-btn" id="btn-user-menu" onclick="toggleDropdown()" style="width:100%;">
-          <div class="sidebar-avatar" id="user-avatar">?</div>
-          <div class="sidebar-user-info">
-            <p class="sidebar-user-name" id="user-display-name">…</p>
-            <p class="sidebar-user-role">Lettore</p>
-          </div>
-          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="color:var(--ink-light);flex-shrink:0"><path d="m6 9 6 6 6-6"/></svg>
+  </aside>
+
+  <!-- ── Content area ── -->
+  <div class="content-area">
+  <header class="content-topbar">
+    <p class="content-topbar-title" id="topbar-title">Dashboard</p>
+    <div class="content-topbar-right">
+      <span class="topbar-stat">Letti: <strong id="stat-read">0</strong></span>
+      <span class="topbar-stat">Da leggere: <strong id="stat-wish">0</strong></span>
+      <span class="topbar-stat">Media: <strong id="stat-avg">—</strong></span>
+      <div class="topbar-divider"></div>
+      <div class="header-user" id="header-user">
+        <button class="topbar-user-btn" id="btn-user-menu" onclick="toggleDropdown()">
+          <div class="topbar-avatar" id="user-avatar">?</div>
+          <span class="topbar-user-name" id="user-display-name">…</span>
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
         </button>
-        <div class="user-dropdown" id="user-dropdown" style="bottom:100%;top:auto;margin-bottom:8px;">
+        <div class="user-dropdown" id="user-dropdown">
           <div class="dropdown-header">
             <p class="dropdown-username" id="dropdown-username">—</p>
             <p class="dropdown-email" id="dropdown-email">—</p>
@@ -739,17 +757,6 @@
           <button class="dropdown-item danger" onclick="doLogout()">↩ Esci</button>
         </div>
       </div>
-    </div>
-  </aside>
-
-  <!-- ── Content area ── -->
-  <div class="content-area">
-  <header class="content-topbar">
-    <p class="content-topbar-title" id="topbar-title">Dashboard</p>
-    <div class="content-topbar-right">
-      <span class="topbar-stat">Letti: <strong id="stat-read">0</strong></span>
-      <span class="topbar-stat">Da leggere: <strong id="stat-wish">0</strong></span>
-      <span class="topbar-stat">Media: <strong id="stat-avg">—</strong></span>
     </div>
   </header>
 
@@ -1052,9 +1059,9 @@
     <div class="rating-area" id="rating-area">
       <p class="modal-section-label">Il tuo voto</p>
       <div class="star-rating" id="star-rating">
-        <span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span>
-        <span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span>
-        <span class="star" data-v="5">⭐</span>
+        <button class="star" data-v="1"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button><button class="star" data-v="2"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button class="star" data-v="3"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button><button class="star" data-v="4"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button class="star" data-v="5"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
       </div>
       <p class="modal-section-label">Note di lettura <span style="opacity:.5;font-weight:300">(facoltativo)</span></p>
       <textarea class="notes-textarea" id="modal-notes" placeholder="Cosa hai pensato di questo libro?"></textarea>
@@ -1517,7 +1524,7 @@ function bookListItem(b){
     </div>
     <div class="book-list-meta">
       ${rating}${wishTag}${year}
-      <span class="book-list-date">${fmtDate(b.addedAt)}</span>
+      ${b.shelf!=='read'?`<span class="book-list-date">${fmtDate(b.addedAt)}</span>`:''}
     </div>
     <button class="book-list-delete" onclick="event.stopPropagation();delBook('${b.id}')" title="Rimuovi">✕</button>
   </div>`;
@@ -1535,7 +1542,7 @@ function bookCard(b){
     <div class="book-info">
       <p class="book-title">${esc(b.title)}</p>
       <p class="book-author">${esc(b.author)}</p>
-      <p class="book-date">${fmtDate(b.addedAt)}</p>
+      ${b.shelf==='wish'?`<p class="book-date">${fmtDate(b.addedAt)}</p>`:''}
     </div>
   </div>`;
 }
@@ -1674,10 +1681,37 @@ function selectShelf(shelf){
   document.getElementById('modal-confirm').textContent=labels[shelf]||'Aggiungi';
 }
 
-document.getElementById('star-rating').addEventListener('mouseover',e=>{const s=e.target.closest('.star');if(!s)return;document.querySelectorAll('#star-rating .star').forEach((x,i)=>x.classList.toggle('active',i<parseInt(s.dataset.v)));});
-document.getElementById('star-rating').addEventListener('mouseout',()=>highlightStars(selRating));
-document.getElementById('star-rating').addEventListener('click',e=>{const s=e.target.closest('.star');if(!s)return;selRating=parseInt(s.dataset.v);highlightStars(selRating);});
-function highlightStars(n){document.querySelectorAll('#star-rating .star').forEach((s,i)=>s.classList.toggle('active',i<n));}
+(function(){
+  const container=document.getElementById('star-rating');
+  function applyHover(v){
+    container.querySelectorAll('.star').forEach((s,i)=>{
+      s.classList.toggle('hovered',i<v);
+      s.classList.toggle('dimmed',i>=v);
+      s.classList.remove('active');
+    });
+  }
+  function clearHover(){highlightStars(selRating);}
+  container.addEventListener('mouseover',e=>{
+    const s=e.target.closest('.star');
+    if(s)applyHover(parseInt(s.dataset.v));
+  });
+  container.addEventListener('mouseout',e=>{
+    if(!e.relatedTarget||!e.relatedTarget.closest('#star-rating'))clearHover();
+  });
+  container.addEventListener('click',e=>{
+    const s=e.target.closest('.star');
+    if(!s)return;
+    selRating=parseInt(s.dataset.v);
+    highlightStars(selRating);
+  });
+})();
+
+function highlightStars(n){
+  document.querySelectorAll('#star-rating .star').forEach((s,i)=>{
+    s.classList.toggle('active',i<n);
+    s.classList.remove('hovered','dimmed');
+  });
+}
 
 document.getElementById('modal-cancel').addEventListener('click',closeModal);
 document.getElementById('add-modal').addEventListener('click',e=>{if(e.target===document.getElementById('add-modal'))closeModal();});
@@ -2210,19 +2244,14 @@ let revRating = 0;
 let currentReviews = [];
 
 // Star interactions for review form
-document.getElementById('rev-stars').addEventListener('mouseover', e=>{
-  const s=e.target.closest('.rev-star');if(!s)return;
-  const v=parseInt(s.dataset.v);
-  document.querySelectorAll('.rev-star').forEach((x,i)=>x.classList.toggle('active',i<v));
-});
-document.getElementById('rev-stars').addEventListener('mouseout', ()=>{
-  document.querySelectorAll('.rev-star').forEach((x,i)=>x.classList.toggle('active',i<revRating));
-});
-document.getElementById('rev-stars').addEventListener('click', e=>{
-  const s=e.target.closest('.rev-star');if(!s)return;
-  revRating=parseInt(s.dataset.v);
-  document.querySelectorAll('.rev-star').forEach((x,i)=>x.classList.toggle('active',i<revRating));
-});
+(function(){
+  const rc=document.getElementById('rev-stars');
+  function applyRevHover(v){rc.querySelectorAll('.rev-star').forEach((s,i)=>{s.classList.toggle('hovered',i<v);s.classList.toggle('dimmed',i>=v);s.classList.remove('active');});}
+  function clearRevHover(){rc.querySelectorAll('.rev-star').forEach((s,i)=>{s.classList.toggle('active',i<revRating);s.classList.remove('hovered','dimmed');});}
+  rc.addEventListener('mouseover',e=>{const s=e.target.closest('.rev-star');if(s)applyRevHover(parseInt(s.dataset.v));});
+  rc.addEventListener('mouseout',e=>{if(!e.relatedTarget||!e.relatedTarget.closest('#rev-stars'))clearRevHover();});
+  rc.addEventListener('click',e=>{const s=e.target.closest('.rev-star');if(!s)return;revRating=parseInt(s.dataset.v);clearRevHover();});
+})();
 
 async function loadPreviewReviews(googleBookId){
   document.getElementById('preview-reviews-loading').style.display='block';
@@ -2384,13 +2413,27 @@ async function loadProfile(){
 function updateHeaderUI(){
   const username=userProfile.username||currentUser.email.split('@')[0];
   const initial=username.charAt(0).toUpperCase();
-  document.getElementById('user-avatar').textContent=initial;
-  document.getElementById('user-display-name').textContent=username;
-  document.getElementById('dropdown-username').textContent=userProfile.username||'(nessun username)';
-  document.getElementById('dropdown-email').textContent=currentUser.email;
-  document.getElementById('profile-avatar').textContent=initial;
-  document.getElementById('profile-name-display').textContent=userProfile.username||username;
-  document.getElementById('profile-email-display').textContent=currentUser.email;
+  // Topbar avatar + name
+  const av=document.getElementById('user-avatar');if(av)av.textContent=initial;
+  const dn=document.getElementById('user-display-name');if(dn)dn.textContent=username;
+  // Dropdown header
+  const du=document.getElementById('dropdown-username');if(du)du.textContent=userProfile.username||'(nessun username)';
+  const de=document.getElementById('dropdown-email');if(de)de.textContent=currentUser.email;
+  // Profile panel
+  const pa=document.getElementById('profile-avatar');if(pa)pa.textContent=initial;
+  const pn=document.getElementById('profile-name-display');if(pn)pn.textContent=userProfile.username||username;
+  const pe=document.getElementById('profile-email-display');if(pe)pe.textContent=currentUser.email;
+  // Sidebar badges — force refresh on every UI update
+  syncSidebarBadges();
+}
+
+function syncSidebarBadges(){
+  const readList=books.filter(b=>b.shelf==='read');
+  const wishList=books.filter(b=>b.shelf==='wish');
+  const readingList=books.filter(b=>b.shelf==='reading');
+  const sbr=document.getElementById('sb-badge-read');if(sbr)sbr.textContent=readList.length;
+  const sbw=document.getElementById('sb-badge-wish');if(sbw)sbw.textContent=wishList.length;
+  const sbrr=document.getElementById('sb-badge-reading');if(sbrr)sbrr.textContent=readingList.length;
 }
 
 function toggleDropdown(){
