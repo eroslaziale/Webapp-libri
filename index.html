@@ -159,6 +159,7 @@
   .content-topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--divider);position:sticky;top:0;z-index:100;}
   .content-topbar-title{font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:var(--text-primary);letter-spacing:-.01em;}
   .content-topbar-right{display:flex;align-items:center;gap:12px;}
+  .topbar-stats-group{display:flex;align-items:center;gap:12px;}
   .topbar-stat{font-size:12px;color:var(--text-tertiary);}
   .topbar-divider{width:1px;height:20px;background:var(--border);margin:0 4px;}
   .topbar-user-btn{display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--r-full);cursor:pointer;transition:all .15s;color:var(--text-secondary);font-family:'Inter',sans-serif;font-size:13px;}
@@ -273,6 +274,8 @@
   .book-info .book-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary);line-height:1.35;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;letter-spacing:-.01em;}
   .book-info .book-author{font-size:11.5px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .book-info .book-date{font-size:11px;color:var(--text-tertiary);font-family:'JetBrains Mono',monospace;margin-top:1px;}
+  .book-date-reading{font-size:10.5px;color:var(--text-tertiary);font-family:'JetBrains Mono',monospace;margin-top:3px;display:flex;align-items:center;gap:3px;}
+  .book-list-date-reading{font-size:11px;color:var(--brand);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:3px;font-weight:500;}
 
   /* ── View toggle ── */
   .view-toggle{display:flex;gap:2px;background:var(--cream-dark);border-radius:8px;padding:3px;}
@@ -651,6 +654,14 @@
     .content-area{margin-left:0;}
     .bottom-nav{display:block;}
     main{padding:16px;padding-bottom:calc(72px + env(safe-area-inset-bottom,0));}
+    /* Mobile topbar: solo titolo + avatar, nascondi stats e nome */
+    .topbar-stats-group{display:none;}
+    .content-topbar{padding:0 14px;height:52px;}
+    .topbar-user-name{display:none;}
+    .topbar-user-btn{padding:4px;gap:0;border:none;background:transparent;}
+    .topbar-user-btn:hover{background:var(--bg);}
+    .topbar-avatar{width:30px;height:30px;font-size:13px;}
+    .content-topbar-right{gap:4px;}
   }
 
   @media(max-width:600px){
@@ -659,6 +670,7 @@
     .header-stats{display:none;}
     .tab-btn{padding:10px 16px;font-size:13px;}
     .auth-card{padding:32px 24px;}
+    .content-topbar-title{font-size:14px;}
   }
 </style>
 </head>
@@ -735,10 +747,12 @@
   <header class="content-topbar">
     <p class="content-topbar-title" id="topbar-title">Dashboard</p>
     <div class="content-topbar-right">
-      <span class="topbar-stat">Letti: <strong id="stat-read">0</strong></span>
-      <span class="topbar-stat">Da leggere: <strong id="stat-wish">0</strong></span>
-      <span class="topbar-stat">Media: <strong id="stat-avg">—</strong></span>
-      <div class="topbar-divider"></div>
+      <div class="topbar-stats-group">
+        <span class="topbar-stat">Letti: <strong id="stat-read">0</strong></span>
+        <span class="topbar-stat">Da leggere: <strong id="stat-wish">0</strong></span>
+        <span class="topbar-stat">Media: <strong id="stat-avg">—</strong></span>
+        <div class="topbar-divider"></div>
+      </div>
       <div class="header-user" id="header-user">
         <button class="topbar-user-btn" id="btn-user-menu" onclick="toggleDropdown()">
           <div class="topbar-avatar" id="user-avatar">?</div>
@@ -1524,7 +1538,9 @@ function bookListItem(b){
     </div>
     <div class="book-list-meta">
       ${rating}${wishTag}${year}
-      ${b.shelf!=='read'?`<span class="book-list-date">${fmtDate(b.addedAt)}</span>`:''}
+      ${b.shelf==='read'
+        ? `<span class="book-list-date-reading">📅 ${fmtDate(b.addedAt)}</span>`
+        : `<span class="book-list-date">${fmtDate(b.addedAt)}</span>`}
     </div>
     <button class="book-list-delete" onclick="event.stopPropagation();delBook('${b.id}')" title="Rimuovi">✕</button>
   </div>`;
@@ -1542,7 +1558,11 @@ function bookCard(b){
     <div class="book-info">
       <p class="book-title">${esc(b.title)}</p>
       <p class="book-author">${esc(b.author)}</p>
-      ${b.shelf==='wish'?`<p class="book-date">${fmtDate(b.addedAt)}</p>`:''}
+      ${b.shelf==='read'
+        ? `<p class="book-date-reading">📅 ${fmtDate(b.addedAt)}</p>`
+        : b.shelf==='wish'
+          ? `<p class="book-date">${fmtDate(b.addedAt)}</p>`
+          : ''}
     </div>
   </div>`;
 }
